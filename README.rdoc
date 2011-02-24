@@ -1,0 +1,49 @@
+= README
+
+== Name
+
+hroonga
+
+== Description
+
+hroonga is a HTTP interface for groonga.
+
+See the following URL about groonga.
+
+* groonga: http://groonga.org/
+
+== Authors
+
+Kouhei Sutou:: <tt><kou@clear-code.com></tt>
+
+== License
+
+LGPL 2.1. See license/LGPL for details.
+
+(Kouhei Sutou has a right to change the license
+inclidng contributed patches.)
+
+== Dependencies
+
+* Ruby (Both 1.8.7 and 1.9.2 are supproted)
+* groonga
+* rroonga
+* passenger
+
+== Install
+
+  % sudo gem install hroonga
+
+== Documents
+
+Japanese only. Sorry.
+
+http://groonga.rubyforge.org/hroonga/
+
+== Mailing list
+
+http://rubyforge.org/mailman/listinfo/groonga-users-en
+
+== Thanks
+
+* ...
