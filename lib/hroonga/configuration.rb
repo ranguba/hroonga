@@ -16,6 +16,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require "pathname"
+require "fileutils"
 
 module Hroonga
   class Configuration
@@ -42,6 +43,22 @@ module Hroonga
       message = "no such file in load paths: <#{path}>" +
         ": load-paths: <#{@load_paths.inspect}>"
       raise LoadError, message
+    end
+
+    def setup_database
+      @database_path = Pathname.new("db/#{environment}/db")
+      if @database_path.exist?
+        @database = Groonga::Database.open(@database_path.to_s,
+                                           :context => context)
+      else
+        FileUtils.mkdir_p(@database_path.dirname.to_s)
+        @database = Groonga::Database.create(:context => context,
+                                             :path => @database_path.to_s)
+      end
+    end
+
+    def context
+      @context ||= Groonga::Context.new(:encoding => :utf8)
     end
 
     def test?

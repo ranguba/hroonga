@@ -26,6 +26,8 @@ config = Hroonga::Configuration.new
 config.add_load_path(base_dir)
 config.load("etc/hroonga.conf")
 
+config.setup_database
+
 if config.development?
   use Rack::ShowExceptions
   use Rack::CommonLogger

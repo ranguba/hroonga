@@ -1,4 +1,4 @@
-# -*- mode: ruby; coding: utf-8 -*-
+#!/usr/bin/env ruby
 #
 # Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
 #
@@ -15,14 +15,9 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-source "http://rubygems.org/"
-
-gem "racknga"
-gem "passenger"
-
-group :development, :test do
-  gem "test-unit-notify"
-  gem "test-unit-rr"
-  gem "test-unit-capybara"
-  gem "thin"
+class TestSelect < Test::Unit::TestCase
+  include Capybara
+  def test_minimum
+    visit("/api/version/1/select?table=Entries")
+  end
 end

@@ -1,4 +1,4 @@
-# -*- mode: ruby; coding: utf-8 -*-
+#!/usr/bin/env ruby
 #
 # Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
 #
@@ -15,14 +15,26 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-source "http://rubygems.org/"
+$VERBOSE = true
 
-gem "racknga"
-gem "passenger"
+$KCODE = "u" if RUBY_VERSION < "1.9"
 
-group :development, :test do
-  gem "test-unit-notify"
-  gem "test-unit-rr"
-  gem "test-unit-capybara"
-  gem "thin"
-end
+require "pathname"
+
+base_dir = Pathname.new(__FILE__).dirname.parent.expand_path
+lib_dir = base_dir + "lib"
+test_dir = base_dir + "test"
+
+require "bundle/setup"
+
+require 'test/unit'
+require 'test/unit/notify'
+
+Test::Unit::Notify.enable = true
+
+$LOAD_PATH.unshift(lib_dir)
+$LOAD_PATH.unshift(test_dir)
+
+require 'hroonga-test-utils'
+
+exit Test::Unit::AutoRunner.run(true, test_dir)

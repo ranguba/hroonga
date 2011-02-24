@@ -15,6 +15,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require "json"
+
 module Hroonga
   module Command
     class Selector
@@ -23,7 +25,39 @@ module Hroonga
       end
 
       def call(env)
-        [200, {}, ["Hello"]]
+        request = Rack::Request.new(env)
+        response = Rack::Response.new
+        session = Session.new(@config, request, response)
+	session.process
+        response.finish
+      end
+
+      class Session
+        def initialize(config, request, response)
+          @config = config
+          @request = request
+          @response = response
+        end
+
+        def process
+          table_name = @request["table"]
+          raise "FIXME: table is missing" if table_name.nil?
+          table = @config.context[table_name]
+          raise "FIXME: table_name is invalid" if table.nil?
+          @response["Content-Type"] = "application/json"
+          @response.write("{")
+          table.each_with_index do |record, i|
+            if i.zero?
+              @response.write("\n")
+            else
+              @response.write(",\n")
+            end
+            @response.write(JSON.generate(record.attributes))
+            break if i == 20
+          end
+          @response.write("\n")
+          @response.write("}")
+        end
       end
     end
   end
