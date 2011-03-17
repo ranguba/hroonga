@@ -17,6 +17,15 @@
 
 class TestSelect < Test::Unit::TestCase
   include Capybara
+
+  def setup
+    config = Hroonga::Configuration.new
+    config.add_load_path(Pathname(__FILE__).dirname.parent)
+    config.load("etc/hroonga.conf")
+    config.setup_database
+    Capybara.app = Hroonga::Command::Selector.new(config)
+  end
+
   def test_minimum
     visit("/api/version/1/select?table=Entries")
   end
