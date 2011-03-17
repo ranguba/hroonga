@@ -25,7 +25,7 @@ base_dir = Pathname.new(__FILE__).dirname.parent.expand_path
 lib_dir = base_dir + "lib"
 test_dir = base_dir + "test"
 
-require "bundle/setup"
+require "bundler/setup"
 
 require 'test/unit'
 require 'test/unit/notify'
