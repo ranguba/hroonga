@@ -19,14 +19,32 @@ class TestSelect < Test::Unit::TestCase
   include Capybara
 
   def setup
-    config = Hroonga::Configuration.new
-    config.add_load_path(Pathname(__FILE__).dirname.parent)
-    config.load("etc/hroonga.conf")
-    config.setup_database
-    Capybara.app = Hroonga::Command::Selector.new(config)
+    @config = Hroonga::Configuration.new
+    @config.add_load_path(Pathname(__FILE__).dirname.parent)
+    @config.load("etc/hroonga.conf")
+    @config.setup_database
+    setup_database
+    Capybara.app = Hroonga::Command::Selector.new(@config)
+  end
+
+  def teardown
+    context = @config.context
+    database = context.database
+    database_path = database.path
+    database.close
+    FileUtils.rm_rf(Pathname(database_path).dirname.to_s)
   end
 
   def test_minimum
     visit("/api/version/1/select?table=Entries")
+    assert_body({}, :content_type => :json)
+  end
+
+  private
+  def setup_database
+    Groonga::Schema.define(:context => @config.context) do |schema|
+      schema.create_table("Entries") do
+      end
+    end
   end
 end
