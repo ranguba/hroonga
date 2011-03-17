@@ -13,6 +13,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require 'hroonga'
+
 require 'test/unit/rr'
 require 'test/unit/capybara'
 
@@ -21,6 +23,8 @@ Capybara.configure do |config|
   config.default_driver = nil
   config.current_driver = nil
 end
+
+ENV["RACK_ENV"] = "test"
 
 module HroongaTestUtils
 end
