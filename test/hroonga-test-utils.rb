@@ -16,5 +16,11 @@
 require 'test/unit/rr'
 require 'test/unit/capybara'
 
+Capybara.configure do |config|
+  # just for suppress warnings
+  config.default_driver = nil
+  config.current_driver = nil
+end
+
 module HroongaTestUtils
 end
