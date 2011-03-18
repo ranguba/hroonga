@@ -45,18 +45,26 @@ module Hroonga
           table = @config.context[table_name]
           raise "FIXME: table_name is invalid" if table.nil?
           @response["Content-Type"] = "application/json"
-          @response.write("{")
+          @response.write("[")
+          write_header(table)
           table.each_with_index do |record, i|
-            if i.zero?
-              @response.write("\n")
-            else
-              @response.write(",\n")
-            end
+            @response.write(",\n")
             @response.write(JSON.generate(record.attributes))
             break if i == 20
           end
           @response.write("\n")
-          @response.write("}")
+          @response.write("]")
+        end
+
+        private
+        def write_header(table)
+          columns = []
+          columns << ["_id", "UInt32"]
+          columns << ["_key", table.domain.name] if table.domain
+          table.columns.each do |column|
+            columns << [column.local_name, column.range.name]
+          end
+          @response.write(JSON.generate(columns))
         end
       end
     end

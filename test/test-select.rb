@@ -37,7 +37,13 @@ class TestSelect < Test::Unit::TestCase
 
   def test_minimum
     visit("/api/version/1/select?table=entries")
-    assert_body({}, :content_type => :json)
+    assert_body([
+                 [
+                  ["_id", "UInt32"],
+                  ["title", "ShortText"],
+                 ],
+                ],
+                :content_type => :json)
   end
 
   private
