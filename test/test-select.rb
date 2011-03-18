@@ -36,14 +36,16 @@ class TestSelect < Test::Unit::TestCase
   end
 
   def test_minimum
-    visit("/api/version/1/select?table=Entries")
+    visit("/api/version/1/select?table=entries")
     assert_body({}, :content_type => :json)
   end
 
   private
   def setup_database
-    Groonga::Schema.define(:context => @config.context) do |schema|
-      schema.create_table("Entries") do
+    ActiveGroonga::Base.context = @config.context
+    ActiveGroonga::Schema.define do |schema|
+      schema.create_table(:entries) do |table|
+        table.short_text :title
       end
     end
   end

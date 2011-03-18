@@ -15,6 +15,8 @@
 
 require 'hroonga'
 
+require 'active_groonga'
+
 require 'test/unit/rr'
 require 'test/unit/capybara'
 
@@ -28,3 +30,5 @@ ENV["RACK_ENV"] = "test"
 
 module HroongaTestUtils
 end
+
+require 'models/entry'
