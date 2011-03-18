@@ -46,25 +46,38 @@ module Hroonga
           raise "FIXME: table_name is invalid" if table.nil?
           @response["Content-Type"] = "application/json"
           @response.write("[")
-          write_header(table)
+          output_columns = resolve_output_columns(table)
+          write_header(output_columns)
           table.each_with_index do |record, i|
+            break if i == 10
             @response.write(",\n")
-            @response.write(JSON.generate(record.attributes))
-            break if i == 20
+            write_record(record, output_columns)
           end
           @response.write("\n")
           @response.write("]")
         end
 
         private
-        def write_header(table)
+        def resolve_output_columns(table)
+          columns = []
           columns = []
           columns << ["_id", "UInt32"]
           columns << ["_key", table.domain.name] if table.domain
           table.columns.each do |column|
             columns << [column.local_name, column.range.name]
           end
+          columns
+        end
+
+        def write_header(columns)
           @response.write(JSON.generate(columns))
+        end
+
+        def write_record(record, columns)
+          record_values = columns.collect do |name, type_name|
+            record.send(name)
+          end
+          @response.write(JSON.generate(record_values))
         end
       end
     end

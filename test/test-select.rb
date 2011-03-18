@@ -35,13 +35,30 @@ class TestSelect < Test::Unit::TestCase
     FileUtils.rm_rf(Pathname(database_path).dirname.to_s)
   end
 
-  def test_minimum
+  def test_no_records
     visit("/api/version/1/select?table=entries")
     assert_body([
                  [
                   ["_id", "UInt32"],
                   ["title", "ShortText"],
                  ],
+                ],
+                :content_type => :json)
+  end
+
+  def test_many_records
+    records = []
+    11.times do
+      entry = Fabricate(:entry)
+      records << [entry.id, entry.title] if records.size < 10
+    end
+    visit("/api/version/1/select?table=entries")
+    assert_body([
+                 [
+                  ["_id", "UInt32"],
+                  ["title", "ShortText"],
+                 ],
+                 *records
                 ],
                 :content_type => :json)
   end

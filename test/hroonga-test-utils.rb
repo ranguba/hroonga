@@ -26,6 +26,8 @@ Capybara.configure do |config|
   config.current_driver = nil
 end
 
+require 'active_groonga_fabrication'
+
 ENV["RACK_ENV"] = "test"
 
 module HroongaTestUtils
