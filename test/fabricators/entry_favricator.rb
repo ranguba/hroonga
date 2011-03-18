@@ -14,4 +14,5 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Fabricator(:entry) do
+  title {Fabricate.sequence(:title) {|i| "Title #{i}"}}
 end
