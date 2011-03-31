@@ -24,9 +24,7 @@ group :development, :test do
   gem "test-unit-notify"
   gem "test-unit-rr"
   # gem "test-unit-capybara"
-  # gem "activegroonga"
-  gem "activemodel"
+  gem "activegroonga-favrication"
   gem "capybara"
-  gem "fabrication"
   gem "thin"
 end
