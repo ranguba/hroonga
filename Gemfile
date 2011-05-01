@@ -23,8 +23,7 @@ gem "passenger"
 group :development, :test do
   gem "test-unit-notify"
   gem "test-unit-rr"
-  # gem "test-unit-capybara"
+  gem "test-unit-capybara"
   gem "activegroonga-fabrication"
-  gem "capybara"
   gem "thin"
 end
