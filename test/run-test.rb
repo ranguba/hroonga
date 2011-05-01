@@ -30,8 +30,6 @@ require "bundler/setup"
 require 'test/unit'
 require 'test/unit/notify'
 
-Test::Unit::Notify.enable = true
-
 $LOAD_PATH.unshift(lib_dir.to_s)
 $LOAD_PATH.unshift(test_dir.to_s)
 
