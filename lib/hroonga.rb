@@ -19,4 +19,5 @@ require "racknga"
 require "racknga/middleware/cache"
 
 require "hroonga/configuration"
+require "hroonga/groonga-command"
 require "hroonga/command/selector"

@@ -37,28 +37,6 @@ end
 use Rack::Runtime
 use Rack::ContentLength
 
-urls = ["/favicon.", "/css/", "/images/", "/javascripts/"]
-
-if config.development?
-  class DirectoryIndex
-    def initialize(app, options={})
-      @app = app
-      @urls = options[:urls]
-    end
-
-    def call(env)
-      path = env["PATH_INFO"]
-      can_serve = @urls.any? { |url| path.index(url) == 0 }
-      env["PATH_INFO"] += "index.html" if can_serve and /\/\z/ =~ path
-      @app.call(env)
-    end
-  end
-
-  use DirectoryIndex, :urls => urls
-end
-
-use Rack::Static, :urls => urls, :root => (base_dir + "public").to_s
-
 use Racknga::Middleware::Deflater
 use Rack::ConditionalGet
 
@@ -69,4 +47,27 @@ use Rack::Head
 
 map "/api/1/select" do
   run Hroonga::Command::Selector.new(config)
+end
+
+map "/d/" do
+  run Hroonga::GroongaCommand.new(config)
+end
+
+if config.development?
+  class DirectoryIndex
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      env["PATH_INFO"] += "index.html" if /\/\z/ =~ env["PATH_INFO"]
+      @app.call(env)
+    end
+  end
+
+  map "/" do
+    use DirectoryIndex
+    document_root = (base_dir + "public").to_s
+    run Rack::File.new(document_root)
+  end
 end
