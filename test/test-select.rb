@@ -47,7 +47,7 @@ class TestSelect < Test::Unit::TestCase
 
   class TestNoQuery < TestSelect
     def test_no_records
-      visit("/api/version/1/select?table=entries")
+      visit("/api/1/select?table=entries")
       assert_body([
                    [
                     ["_id", "UInt32"],
@@ -63,7 +63,7 @@ class TestSelect < Test::Unit::TestCase
         entry = Fabricate(:entry)
         records << [entry.id, entry.title] if records.size < 10
       end
-      visit("/api/version/1/select?table=entries")
+      visit("/api/1/select?table=entries")
       assert_body([
                    [
                     ["_id", "UInt32"],

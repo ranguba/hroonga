@@ -67,6 +67,6 @@ use Racknga::Middleware::JSONP
 use Rack::Lint
 use Rack::Head
 
-map "/api/version/1/select" do
+map "/api/1/select" do
   run Hroonga::Command::Selector.new(config)
 end
