@@ -18,6 +18,10 @@
 class TestSelect < Test::Unit::TestCase
   include Capybara
 
+  def body
+    page.driver.response.body
+  end
+
   def setup
     @config = Hroonga::Configuration.new
     @config.add_load_path(Pathname(__FILE__).dirname.parent)
