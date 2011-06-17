@@ -26,6 +26,12 @@ module Hroonga
         @env = env
         @request = Rack::Request.new(@env)
         
+        response = Rack::Response.new
+
+        response["Content-Type"] = "application/json"
+        response.write("{}")
+
+        response
       end
     end
   end
