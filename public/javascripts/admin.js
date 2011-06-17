@@ -70,7 +70,10 @@ var Groonga = {
 };
 
 var GroongaAdmin = {
-  SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
+  SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer',
+                       'sortby', 'output_columns', 'offset', 'limit',
+                       'drilldown', 'drilldown_sortby', 'drilldown_output_columns',
+                       'drilldown_offset', 'drilldown_limit'],
   CLASS: {
     QUERY_INVALID: "query-invalid"
   },
