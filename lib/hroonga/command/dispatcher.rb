@@ -15,13 +15,14 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require "hroonga/command/utils"
 require "hroonga/command/selector"
 require "hroonga/command/table-create"
 
 module Hroonga
   module Command
     class Dispatcher
-      attr_reader :request
+      include Utils
 
       def initialize(config)
         @config = config
@@ -29,7 +30,6 @@ module Hroonga
 
       def call(env)
         @env = env
-        @request = Rack::Request.new(@env)
 
         command_class = dispatch
         command = command_class.new(@config)
@@ -39,9 +39,6 @@ module Hroonga
 
       private
       def dispatch
-        path = request.path
-        path[path_prefix] = ""
-
         case path
         when /\A\/[^\/\?]+\/?\z/
           dispatch_table_command
@@ -52,8 +49,9 @@ module Hroonga
         when /\A\/?\z/
           TableList
         else
-          nil # XXX this should return an error command
+          default_command
         end
+        TableCreate
       end
 
       def dispatch_table_command
@@ -78,16 +76,14 @@ module Hroonga
         end
       end
 
-      def request_method
-        request.env["REQUEST_METHOD"]
-      end
-
-      def path_prefix
-        "/api/1/tables"
-      end
-
       def default_command
         nil # XXX this should return an error command
+      end
+
+      class << self
+        def path_prefix
+          "/api/1/tables"
+        end
       end
     end
   end

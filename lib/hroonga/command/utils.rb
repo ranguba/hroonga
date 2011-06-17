@@ -15,52 +15,32 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require "cgi"
+require "groonga"
+
 module Hroonga
   module Command
-    class TableCreate
-      include Utils
-
-      def initialize(config)
-        @config = config
+    module Utils
+      def context
+        @config.context
       end
 
-      def call(env)
-        @env = env
-        process_request
+      def request
+        @request ||= Rack::Request.new(@env)
       end
 
-      private
-      def process_request
-        response = Rack::Response.new
-
-        create
-
-        response["Content-Type"] = "application/json"
-        response.write("{}")
-
-        response
+      def path
+        @path ||= create_path
       end
 
-      def create
-        Groonga::Schema.define(:context => context) do |schema|
-          schema.create_table(name, :type => :hash, :key_type => :ShortText)
-        end
+      def create_path
+        path = request.path
+        path[self.class.path_prefix] = ""
+        path
       end
 
-      def name
-        @name ||= create_name
-      end
-
-      def create_name
-        name = path
-        name["/"] = ""
-        CGI.unescape(name)
-      end
-
-      class << self
-        def path_prefix
-          "#{Dispatcher.path_prefix}"
-        end
+      def request_method
+        request.env["REQUEST_METHOD"]
       end
     end
   end
