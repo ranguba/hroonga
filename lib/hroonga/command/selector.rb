@@ -28,7 +28,7 @@ module Hroonga
         request = Rack::Request.new(env)
         response = Rack::Response.new
         session = Session.new(@config, request, response)
-	session.process
+        session.process
         response.finish
       end
 
