@@ -70,6 +70,9 @@ Groonga = {
 };
 GroongaAdmin = {
   SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
+  CLASS: {
+    QUERY_INVALID: "query-invalid"
+  },
   initialize: function() {
     GroongaAdmin.hide_error_message();
     GroongaAdmin.current_table = null;
@@ -499,7 +502,19 @@ GroongaAdmin = {
       return ret;
     }
   },
-  recordlist_simple: function(table_name, simplequery, simplequery_type, page, hide_dialog) {
+  get_recordlist_simple_query_area: function () {
+    return $("#tab-recordlist-simplequery");
+  },
+  set_recordlist_simple_query_is_valid: function (is_valid) {
+    var simple_query_area = GroongaAdmin.get_recordlist_simple_query_area();
+    var class_name = GroongaAdmin.CLASS.QUERY_INVALID;
+
+    if (is_valid)
+      simple_query_area.removeClass(class_name);
+    else
+      simple_query_area.addClass(class_name);
+  },
+  recordlist_simple: function(table_name, simplequery, simplequery_type, page, hide_dialog, clear_old_list) {
     var d = {
       'table': table_name,
       'offset': (page - 1) * GroongaAdmin.recordlist_count,
@@ -516,7 +531,13 @@ GroongaAdmin = {
       break;
     }
   },
-  recordlist: function(params, show_pager, hide_dialog) {
+  get_recordlist: function () {
+    return $('#tab-recordlist-table');
+  },
+  clear_recordlist: function () {
+    GroongaAdmin.get_recordlist().empty();
+  },
+  recordlist: function(params, show_pager, hide_dialog, clear_old_list) {
     GroongaAdmin.reload_record_func = function(){
       GroongaAdmin.recordlist(params, show_pager, hide_dialog);
     };
@@ -532,6 +553,7 @@ GroongaAdmin = {
             alert('error');
             return false;
           }
+          GroongaAdmin.set_recordlist_simple_query_is_valid(true);
           var body = d.shift();
           var recs = body.shift();
           var all_count = recs.shift()[0];
@@ -570,6 +592,8 @@ GroongaAdmin = {
           GroongaAdmin.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.set_recordlist_simple_query_is_valid(false);
+          GroongaAdmin.clear_recordlist();
           GroongaAdmin.errorloading(XMLHttpRequest, hide_dialog);
         }
       })
@@ -1058,7 +1082,11 @@ GroongaAdmin = {
   errorloading: function(ajax, hide_dialog) {
     var json = null;
     if (ajax) {
-      json = jQuery.parseJSON(ajax.responseText);
+      try {
+        json = jQuery.parseJSON(ajax.responseText);
+      } catch (x) {
+        console.log("Failed to parse json " + x);
+      }
     }
     GroongaAdmin.hideloading();
     for ( i = 0; i < GroongaAdmin.semaphore.length; i++) {

@@ -116,3 +116,7 @@ span.pager-current a {
   float        : left;
   margin-right : 0.3em;
 }
+
+.query-invalid {
+  background-color : #ff7b71;
+}
