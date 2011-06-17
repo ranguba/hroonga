@@ -49,6 +49,18 @@ map "/api/1/select" do
   run Hroonga::Command::Selector.new(config)
 end
 
+map "/api/1/tables" do
+  run Hroonga::Command::Dispatcher.new(config)
+end
+
+# map "/api/1/types" do
+#   run Hroonga::Command::ListTypes.new(config)
+# end
+
+# map "/api/1/tokenizers" do
+#   run Hroonga::Command::ListTokenizers.new(config)
+# end
+
 map "/d/" do
   run Hroonga::GroongaCommand.new(config)
 end
