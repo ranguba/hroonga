@@ -44,14 +44,16 @@ module Hroonga
 
 p request.inspect
         case path
-        when /\A\/[^\/\?]+\/?/
+        when /\A\/[^\/\?]+\/?\z/
           TableCreate
           TableRemove
-        when /\A\/[^\/\?]+\/columns\/[^\/\?]+\/?/
+        when /\A\/[^\/\?]+\/columns\/[^\/\?]+\/?\z/
           ColumnCreate
           ColumnRemove
-        when /\A\/[^\/\?]+\/columns\/?/
+        when /\A\/[^\/\?]+\/columns\/?\z/
           ColumnList
+        when /\A\/?\z/
+          TableList
         else
           nil # XXX this should return an error command
         end

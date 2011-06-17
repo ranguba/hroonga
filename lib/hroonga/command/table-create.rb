@@ -25,6 +25,7 @@ module Hroonga
       def call(env)
         @env = env
         @request = Rack::Request.new(@env)
+        
       end
     end
   end
