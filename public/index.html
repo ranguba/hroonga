@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="css/admin.css">
 <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.13.custom.css">
 <script type="text/javascript" src="javascripts/jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="javascripts/jquery.json-2.2.min.js"></script>
 <script type="text/javascript" src="javascripts/jquery-ui-1.8.13.custom.min.js"></script>
 </head>
 <body>
@@ -122,12 +123,14 @@
 
         <!-- table view -->
         <div id="table-tabs">
+
           <ul>
             <li><a href="#table-tab-recordlist" id="tab-recordlist-link">レコード一覧</a></li>
             <li><a href="#table-tab-columnlist" id="tab-columnlist-link">カラム一覧</a></li>
             <li><a href="#table-tab-createrecord" id="tab-createrecord-link">レコード作成</a></li>
             <li><a href="#table-tab-createcolumn">カラム作成</a></li>
           </ul>
+
           <div id="table-tab-recordlist">
             <input type="checkbox" id="table-tab-recordlist-full-checkbox" /><label for="table-tab-recordlist-full-checkbox">管理モード</label>
             <div id="table-tab-recordlist-form-simple">
@@ -160,16 +163,19 @@
             </div>
             <input type="button" id="recordlist-remove-record" value="選択レコード削除">
           </div>
+
           <div id="table-tab-columnlist">
             <div id="tab-columnlist-table">
             </div>
             <input type="button" id="columnlist-remove-column" value="選択カラム削除">
           </div>
+
           <div id="table-tab-createrecord">
             <table id="table-createrecord">
             </table>
             <input type="button" id="createrecord-add-record" value="レコード追加">
           </div>
+
           <div id="table-tab-createcolumn">
             <table>
               <tr>
@@ -234,13 +240,24 @@
             <input type="button" id="createcolumn-add-column" value="カラム追加">
           </div>
         </div>
+
+        <div class="ui-widget" id="admin-error-message-area">
+          <div class="ui-state-error ui-corner-all admin-error">
+	    <p>
+              <span class="ui-icon ui-icon-alert admin-error-icon"></span>
+              <span id="admin-error-message-body">Error!</span>
+            </p>
+	  </div>
+	</div>
       </td>
     </tr>
   </table>
 </div>
+
 <div id="footer">
-Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a>.
+  Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a>.
 </div>
+
 <script type="text/javascript" src="javascripts/admin.js"></script>
 </body>
 </html>

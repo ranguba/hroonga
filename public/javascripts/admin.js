@@ -71,6 +71,7 @@ Groonga = {
 GroongaAdmin = {
   SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   initialize: function() {
+    GroongaAdmin.hide_error_message();
     GroongaAdmin.current_table = null;
     GroongaAdmin.statusTimer = null;
     GroongaAdmin.semaphore = new Array();
@@ -1065,15 +1066,17 @@ GroongaAdmin = {
       GroongaAdmin.semaphore.splice(i, 1);
       i--;
     }
-    if ( $("#loadingdialog").size() == 0 && !hide_dialog) {
-      var errtext;
-      if (json){
-        errtext = "groongaでエラーが発生しました。<br>" + json[0][3] + "(" + json[0][0] + ")";
-      } else if (ajax) {
-        errtext = "通信エラーが発生しました。<br>" + ajax.status + ajax.statusText;
-      } else {
-        errtext = "通信エラーが発生しました。";
-      }
+
+    var errtext;
+    if (json) {
+      errtext = "groongaでエラーが発生しました: " + json[0][3] + "(" + json[0][0] + ")";
+    } else if (ajax) {
+      errtext = "通信エラーが発生しました: " + ajax.status + " " + ajax.statusText;
+    } else {
+      errtext = "通信エラーが発生しました";
+    }
+
+    if ($("#loadingdialog").size() == 0 && !hide_dialog) {
       $("<div />")
         .append(errtext)
         .attr("id", "loadingdialog")
@@ -1098,6 +1101,26 @@ GroongaAdmin = {
       return -1;
     }
     return 0;
+  },
+  // Error
+  echo_error: function (msg) {
+    GroongaAdmin.set_error_message(msg);
+    GroongaAdmin.show_error_message(msg);
+  },
+  get_error_message_area: function () {
+    return $("#admin-error-message-area");
+  },
+  get_error_message_body: function () {
+    return $("#admin-error-message-body");
+  },
+  hide_error_message: function () {
+    return GroongaAdmin.get_error_message_area().hide();
+  },
+  show_error_message: function () {
+    return GroongaAdmin.get_error_message_area().show();
+  },
+  set_error_message: function (msg) {
+    return GroongaAdmin.get_error_message_body().text(msg);
   }
 };
 

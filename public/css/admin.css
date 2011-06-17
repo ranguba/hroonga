@@ -102,3 +102,17 @@ span.pager-current a {
   color: white;
   font-weight: bold;
 }
+
+#footer {
+  padding : 10px 0 0 5px;
+}
+
+.admin-error {
+  font-weight  : bold;
+  padding-left : 4px;
+}
+
+.admin-error-icon {
+  float        : left;
+  margin-right : 0.3em;
+}
