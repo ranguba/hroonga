@@ -25,6 +25,15 @@ function prim2html(prim, limit) {
   }
 }
 
+function type_filter(value, type) {
+  switch (type) {
+    case 'Time':
+    return value + " [" + (new Date(value)) + "]";
+  default:
+    return value;
+  }
+}
+
 function escapeHTML(str) {
   return str.replace(/&/g, "&amp;")
             .replace(/"/g, "&quot;")
@@ -261,71 +270,77 @@ var GroongaAdmin = {
       GroongaAdmin.statusTimer = null;
     }
   },
-  create_table_element: function (d, check, button) {
+  create_table_element: function (content, schema, check, button) {
     var elms = ['<table class="records">'];
-    if ($.isArray(d)) {
+
+    if ($.isArray(content)) {
       elms.push('<thead>');
-      var l = d.length;
-      if (l >= 1) {
-        var line = d[0];
-        elms.push('<thead>');
-        if ($.isArray(line)) {
+      elms.push('<thead>');
+
+      if ($.isArray(schema)) {
+        elms.push('<tr>');
+        if (check)
+          elms.push('<th/>');
+
+        var names = $.map(schema, function (attribute) { return attribute[0]; });
+        var types = $.map(schema, function (attribute) { return attribute[1]; });
+
+        for (var j = 0, schema_len = schema.length; j < schema_len; j++) {
+          elms.push('<th>');
+          elms.push(prim2html(names[j], 128));
+          elms.push('<br />');
+          elms.push(prim2html(types[j], 128));
+          elms.push('</th>');
+        }
+
+        if (button)
+          elms.push('<th/>');
+        elms.push('</tr>');
+      }
+
+      elms.push('</thead>');
+
+      elms.push('<tbody>');
+      for (var i = 0, content_len = content.length; i < content_len; i++) {
+        var row = content[i];
+        if ($.isArray(row)) {
           elms.push('<tr>');
-          var m = line.length;
-          if (check) {
-            elms.push('<th/>');
+          switch (check) {// チェックボックスの値を何にするか
+          case 1: // 1番目の要素(レコード一覧の_id等)
+          case 2: // 2番目の要素(テーブル・カラム一覧のname等)
+            elms.push('<td><input type="checkbox" value="');
+            // XXX: コレやばい
+            elms.push(row[check - 1]);
+            elms.push('" /></td>');
+            break;
           }
-          for (var j = 0; j < m; j++) {
-            elms.push('<th>');
-            elms.push(prim2html(line[j][0], 128));
-            elms.push('<br />');
-            elms.push(prim2html(line[j][1], 128));
-            elms.push('</th>');
+          for (var j = 0, row_len = row.length; j < row_len; j++) {
+            var cell = row[j];
+            var value = types ? type_filter(cell, types[j]) : cell;
+            elms.push('<td>');
+            elms.push(prim2html(value, 128));
+            elms.push('</td>');
           }
-          if (button) {
-            elms.push('<th/>');
+          switch(button) {
+          case 1: // Edit record
+            elms.push('<td><input type="button" onClick="GroongaAdmin.show_edit_record(');
+            elms.push(row[0]);
+            elms.push(');" value="編集" /></td>');
+            break;
+          case 2: // Table
+            elms.push('<td><input type="button" onClick="$(\'#side-menu-tablelist-link-');
+            elms.push(row[1]);
+            elms.push('\').click();" value="詳細" /></td>');
+            break;
           }
           elms.push('</tr>');
         }
-        elms.push('</thead>');
-        elms.push('<tbody>');
-        for (var i = 1; i < l; i++) {
-          line = d[i];
-          if ($.isArray(line)) {
-            elms.push('<tr>');
-            var m = line.length;
-            switch(check) {// チェックボックスの値を何にするか
-            case 1: // 1番目の要素(レコード一覧の_id等)
-            case 2: // 2番目の要素(テーブル・カラム一覧のname等)
-              elms.push('<td><input type="checkbox" value="');
-              elms.push(line[check-1]);
-              elms.push('" /></td>');
-              break;
-            }
-            for (var j = 0; j < m; j++) {
-              elms.push('<td>');
-              elms.push(prim2html(line[j], 128));
-              elms.push('</td>');
-            }
-            switch(button) {
-            case 1: // Edit record
-              elms.push('<td><input type="button" onClick="GroongaAdmin.show_edit_record(');
-              elms.push(line[0]);
-              elms.push(');" value="編集" /></td>');
-              break;
-            case 2: // Table
-              elms.push('<td><input type="button" onClick="$(\'#side-menu-tablelist-link-');
-              elms.push(line[1]);
-              elms.push('\').click();" value="詳細" /></td>');
-              break;
-            }
-            elms.push('</tr>');
-          }
-        }
-        elms.push('</tbody>');
       }
+      elms.push('</tbody>');
     }
+
     elms.push('</table>');
+
     return elms.join('');
   },
   show_edit_record: function(id) {
@@ -457,7 +472,7 @@ var GroongaAdmin = {
         success: function(d) {
           if (GroongaAdmin.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(GroongaAdmin.create_table_element(b, 2, 2));
+          var table = $(GroongaAdmin.create_table_element(b.slice(1), b[0], 2, 2));
           $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
           GroongaAdmin.hideloading();
         },
@@ -586,12 +601,13 @@ var GroongaAdmin = {
           } else {
             pager = $('<span />');
           }
+
           $('#tab-recordlist-table')
             .empty()
             .append($('<h1 />').text('レコード一覧: ' + params['table']))
             .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
-            .append($('<div />').html(GroongaAdmin.create_table_element(recs, 1, 1)))
+            .append($('<div />').html(GroongaAdmin.create_table_element(recs.slice(1), recs[0], 1, 1)))
             .append(pager);
           GroongaAdmin.hideloading();
         },
@@ -613,7 +629,7 @@ var GroongaAdmin = {
         success: function(d) {
           if (GroongaAdmin.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(GroongaAdmin.create_table_element(b, 2));
+          var table = $(GroongaAdmin.create_table_element(b.slice(1), b[0], 2));
           $('#tab-columnlist-table')
             .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
