@@ -42,14 +42,11 @@ module Hroonga
         path = request.path
         path[path_prefix] = ""
 
-p request.inspect
         case path
         when /\A\/[^\/\?]+\/?\z/
-          TableCreate
-          TableRemove
+          dispatch_table_command
         when /\A\/[^\/\?]+\/columns\/[^\/\?]+\/?\z/
-          ColumnCreate
-          ColumnRemove
+          dispatch_column_command
         when /\A\/[^\/\?]+\/columns\/?\z/
           ColumnList
         when /\A\/?\z/
@@ -59,8 +56,38 @@ p request.inspect
         end
       end
 
+      def dispatch_table_command
+        case request_method
+        when "POST"
+          TableCreate
+        when "DELETE"
+          TableRemove
+        else
+          default_command
+        end
+      end
+
+      def dispatch_column_command
+        case request_method
+        when "POST"
+          ColumnCreate
+        when "DELETE"
+          ColumnRemove
+        else
+          default_command
+        end
+      end
+
+      def request_method
+        request.env["REQUEST_METHOD"]
+      end
+
       def path_prefix
         "/api/1/tables"
+      end
+
+      def default_command
+        nil # XXX this should return an error command
       end
     end
   end
