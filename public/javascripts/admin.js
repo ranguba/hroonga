@@ -32,7 +32,7 @@ function escapeHTML(str) {
             .replace(/>/g, "&gt;");
 }
 
-Groonga = {
+var Groonga = {
   key_type_list: ['Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                   'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
                   'TokyoGeoPoint', 'WGS84GeoPoint'],
@@ -68,7 +68,8 @@ Groonga = {
   GRN_OBJ_WITH_WEIGHT:            (0x01<<8),
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
-GroongaAdmin = {
+
+var GroongaAdmin = {
   SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   CLASS: {
     QUERY_INVALID: "query-invalid"
