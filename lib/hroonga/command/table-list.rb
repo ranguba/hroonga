@@ -39,10 +39,10 @@ module Hroonga
 
         {
           "table_type" => get_table_type(table),
-          "domain"     => domain.name,
+          "domain"     => domain ? domain.name : "",
           "path"       => table.path,
           "flags"      => "",   # TODO: implement this
-          "range"      => domain.range,
+          "range"      => domain ? domain.range : "",
         }
       end
 
