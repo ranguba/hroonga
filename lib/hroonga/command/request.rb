@@ -170,7 +170,7 @@ module Hroonga
       end
 
       def option(key)
-        if query.include?(key)
+        if query.include?(key) and not query[key].empty?
           value = unescape(query[key])
           value.to_sym
         else
