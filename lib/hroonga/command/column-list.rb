@@ -45,8 +45,8 @@ module Hroonga
 
       class << self
         def get_column_array(table)
-          ColumnList.get_special_column_array(table).
-            concat(ColumnList.columns_to_hash(table.columns))
+          ColumnList.get_special_column_array(table) +
+            ColumnList.columns_to_hash(table.columns)
         end
 
         def columns_to_hash(columns)
