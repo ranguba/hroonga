@@ -29,7 +29,11 @@ module Hroonga
       end
 
       def request
-        @request ||= Request.new(@env)
+        @request ||= request_class.new(@env)
+      end
+
+      def request_class
+        Request
       end
 
       def successfully_processed_response

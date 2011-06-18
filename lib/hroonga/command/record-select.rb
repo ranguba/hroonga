@@ -22,14 +22,47 @@ module Hroonga
     class RecordSelect
       include Utils
 
+      class Request < Command::Request
+        def output_columns
+          string_option("output_columns")
+        end
+
+        def groonga_query
+          string_option("query")
+        end
+
+        def filter
+          string_option("filter")
+        end
+
+        def limit
+          string_option("limit")
+        end
+
+        def offset
+          string_option("offset")
+        end
+      end
+
       def initialize(config)
         @config = config
+      end
+
+      def request_class
+        Request
       end
 
       def call(env)
         @env = env
         selector = SelectorByMethod.new(context, context.database.path)
-        result = selector.select(Query.new(:table => request.table_name, :output_columns => "_id _key"))
+        result = selector.select(Query.new(
+          :table => request.table_name,
+          :output_columns => request.output_columns,
+          :query => request.groonga_query,
+          :filter => request.filter,
+          :limit => request.limit,
+          :offset => request.offset,
+        ))
 
         response = Rack::Response.new
         response["Content-Type"] = "application/json"
