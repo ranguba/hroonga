@@ -55,7 +55,6 @@ function column_flag_filter(flag) {
     return 'WITH_WEIGHT';
     case 'GRN_OBJ_WITH_POSITION':
     return 'WITH_POSITION';
-    case 
   default:
     return value;
   }
