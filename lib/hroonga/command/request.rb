@@ -92,7 +92,7 @@ module Hroonga
       end
 
       def parse_column_name
-        name_match = command_path.match(/\/columns\/([^\/+])/)
+        name_match = command_path.match(/\/columns\/([^\/]+)/)
         if name_match
           unescape(name_match.to_a[1])
         else
