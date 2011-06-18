@@ -54,6 +54,7 @@ module Hroonga
       def create_options
         options = {}
         options[:type] = request.column_type
+        options[:name] = request.column_name if request.column_type == :index
         options[:with_section] = true if request.column_flags[:WITH_SECTION]
         options[:with_weight] = true if request.column_flags[:WITH_WEIGHT]
         options[:with_position] = true if request.column_flags[:WITH_POSITION]
