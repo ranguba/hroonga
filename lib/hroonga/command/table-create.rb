@@ -64,7 +64,7 @@ module Hroonga
       def parse_table_type
         if query.include?("table_type")
           table_type = unescape(query["table_type"])
-          table_type.snake_case.to_sym
+          to_table_type(table_type).to_sym
         else
           default_table_type
         end
@@ -88,12 +88,6 @@ module Hroonga
 
       def default_key_type
         :ShortText
-      end
-
-      def parse_name
-        name = path
-        name["/"] = ""
-        unescape(name)
       end
 
       class << self

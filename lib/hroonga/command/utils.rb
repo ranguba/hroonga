@@ -18,16 +18,22 @@
 require "cgi"
 require "groonga"
 
-class String
-  def snake_case
-    self.gsub(/([A-Z])/, "_\\1").downcase.sub(/\A_/, "")
-  end
-end
-
 module Hroonga
   module Command
     module Utils
       include Rack::Utils
+
+      def to_snake_case(string)
+        string.gsub(/([A-Z])/, "_\\1").downcase.sub(/\A_/, "")
+      end
+
+      def to_table_type(string)
+        to_snake_case(string)
+      end
+
+      def to_column_type(string)
+        to_snake_case(string)
+      end
 
       def context
         @config.context
