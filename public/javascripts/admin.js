@@ -34,7 +34,7 @@ function type_filter(value, type) {
   }
 }
 
-function column_type_filter(value, type) {
+function column_type_filter(type) {
   switch (type) {
     case 'GRN_OBJ_COLUMN_SCALAR':
     return 'Scalar';
@@ -43,7 +43,7 @@ function column_type_filter(value, type) {
     case 'GRN_OBJ_COLUMN_INDEX':
     return 'Index';
   default:
-    return value;
+    return type;
   }
 }
 
@@ -880,7 +880,7 @@ var GroongaAdmin = {
     d = {
       flags: flags.join('|'),
       column_type: column_type_filter($('#createcolumn-column-type').val()),
-      value_type: $('#createcolumn-column-type').val()
+      value_type: $('#createcolumn-type').val()
     };
     if ($('#createcolumn-source').val()) {
       d['source'] = $('#createcolumn-source').val();
