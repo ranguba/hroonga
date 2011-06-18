@@ -39,7 +39,7 @@ module Hroonga
 
       private
       def dispatch
-        case path
+        case request.command_path
         when /\A\/[^\/\?]+\/?\z/
           dispatch_table_command
         when /\A\/[^\/\?]+\/columns\/[^\/\?]+\/?\z/
@@ -54,7 +54,7 @@ module Hroonga
       end
 
       def dispatch_table_command
-        case request_method
+        case request.method
         when "POST"
           TableCreate
         when "DELETE"
@@ -65,7 +65,7 @@ module Hroonga
       end
 
       def dispatch_column_command
-        case request_method
+        case request.method
         when "POST"
           ColumnCreate
         when "DELETE"

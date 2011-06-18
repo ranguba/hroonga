@@ -43,62 +43,7 @@ module Hroonga
 
       def create
         Groonga::Schema.define(:context => context) do |schema|
-          schema.create_table(name, :type => table_type, :key_type => key_type)
-        end
-      end
-
-      def name
-        @name ||= parse_name
-      end
-
-      def parse_name
-        name = path
-        name["/"] = ""
-        unescape(name)
-      end
-
-      def table_type
-        @table_type ||= parse_table_type
-      end
-
-      def parse_table_type
-        if query.include?("table_type")
-          table_type = unescape(query["table_type"])
-          table_type.snake_case.to_sym
-        else
-          default_table_type
-        end
-      end
-
-      def default_table_type
-        :hash
-      end
-
-      def key_type
-        @key_type ||= parse_key_type
-      end
-
-      def parse_key_type
-        if query.include?("key_type")
-          unescape(query["key_type"]).to_sym
-        else
-          default_key_type
-        end
-      end
-
-      def default_key_type
-        :ShortText
-      end
-
-      def parse_name
-        name = path
-        name["/"] = ""
-        unescape(name)
-      end
-
-      class << self
-        def path_prefix
-          "#{Dispatcher.path_prefix}"
+          schema.create_table(request.table_name, :type => request.table_type, :key_type => request.key_type)
         end
       end
     end
