@@ -56,7 +56,7 @@ module Hroonga
         options = {}
         options[:type] = request.column_type
         options[:name] = request.column_name if request.column_type == :index
-        if !not request.column_compress.nil? && request.column_compress != ""
+        if !request.column_compress.nil? && request.column_compress != ""
           options[:compress] = request.column_compress
         end
         options[:with_section] = true if request.column_flags[:WITH_SECTION]
