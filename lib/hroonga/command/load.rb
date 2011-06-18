@@ -17,7 +17,7 @@
 
 module Hroonga
   module Command
-    class ColumnCreate
+    class Load
       include Utils
 
       def initialize(config)
@@ -31,34 +31,22 @@ module Hroonga
 
       private
       def process_request
-        create
+        load
         successfully_processed_response
       end
 
-      def create
-        Groonga::Schema.define(:context => context) do |schema|
-          schema.change_table(request.table_name) do |table|
-            if request.column_type == :index
-              table.index(request.value_type, request.column_source, options)
-            else
-              table.column(request.column_name, request.value_type, options)
-            end
+      def load
+        if request.record_key.nil?
+          request.records.each do |key, record|
+            table.add(key, record)
           end
+        else
+          table.add(request.record_key, request.record)
         end
       end
 
-      def options
-        @options ||= create_options
-      end
-
-      def create_options
-        options = {}
-        options[:type] = request.column_type
-        options[:name] = request.column_name if request.column_type == :index
-        options[:with_section] = true if request.column_flags[:WITH_SECTION]
-        options[:with_weight] = true if request.column_flags[:WITH_WEIGHT]
-        options[:with_position] = true if request.column_flags[:WITH_POSITION]
-        options
+      def table
+        @table ||= @config.context[request.table_name]
       end
     end
   end

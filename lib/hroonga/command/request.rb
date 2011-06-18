@@ -15,6 +15,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require "json"
+
 module Hroonga
   module Command
     class Request < Rack::Request
@@ -105,6 +107,15 @@ module Hroonga
       end
 
 
+      def record
+        @record ||= reject_special_keys(json_option("record"))
+      end
+
+      def records
+        @records ||= parse_records
+      end
+
+
       private
       def parse_command_path
         command_path = path
@@ -139,12 +150,27 @@ module Hroonga
         end
       end
 
+      def parse_records
+        records = json_option("records")
+        records_hash = {}
+        records.each do |record|
+          key = record["_key"]
+          next unless key
+          records_hash[key] = reject_special_keys(record)
+        end
+        records_hash
+      end
+
       def unescape(string)
         Rack::Utils.unescape(string)
       end
 
+      def to_snake_case(string)
+        string.gsub(/([A-Z])/, "_\\1").downcase.sub(/\A_/, "")
+      end
+
       def option(key)
-        if query.include?(key)
+        if query.include?(key) and not query[key].empty?
           value = unescape(query[key])
           value.to_sym
         else
@@ -182,8 +208,21 @@ module Hroonga
         end
       end
 
-      def to_snake_case(string)
-        string.gsub(/([A-Z])/, "_\\1").downcase.sub(/\A_/, "")
+      def json_option(key)
+        if query.include?(key)
+          flags = {}
+          value = unescape(query[key])
+          JSON.parse(value)
+        else
+          nil
+        end
+      end
+
+      def reject_special_keys(record)
+        record.keys.each do |key|
+          record.delete(key) if key[0] == "_"
+        end
+        record
       end
     end
   end
