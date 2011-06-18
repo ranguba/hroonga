@@ -31,14 +31,8 @@ module Hroonga
 
       private
       def process_request
-        response = Rack::Response.new
-
         create
-
-        response["Content-Type"] = "application/json"
-        response.write("{}")
-
-        response
+        successfully_processed_response
       end
 
       def create
