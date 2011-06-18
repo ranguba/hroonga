@@ -152,6 +152,14 @@ module Hroonga
         end
       end
 
+      def string_option(key)
+        if query.include?(key)
+          unescape(query[key])
+        else
+          nil
+        end
+      end
+
       def snake_cased_option(key)
         if query.include?(key)
           value = unescape(query[key])

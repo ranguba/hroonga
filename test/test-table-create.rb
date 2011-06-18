@@ -55,7 +55,8 @@ class TestTableCreate < TestHroongaCommand
     assert_table("Entries",
                  :type => Groonga::Hash,
                  :key_type => "ShortText",
-                 :default_tokenizer => "TokenBigram")
+                 :default_tokenizer => "TokenBigram",
+                 :normalize_key => false)
   end
 
   def test_patricia_trie_table
@@ -67,8 +68,10 @@ class TestTableCreate < TestHroongaCommand
                  :type => Groonga::PatriciaTrie,
                  :key_type => "ShortText",
                  :default_tokenizer => "TokenBigram",
-                 :flags => "KEY_NORMALIZE")
+                 :normalize_key => true)
   end
+
+  # XXX test for the flag "KEY_WITH_SIS" is required!
 
   private
   def assert_no_table(name)
@@ -88,8 +91,8 @@ class TestTableCreate < TestHroongaCommand
     if properties.include?(:default_tokenizer)
       actual[:default_tokenizer] = table.default_tokenizer.name
     end
-    if properties.include?(:flags)
-      actual[:flags] = table.flags # XXX
+    if properties.include?(:normalize_key)
+      actual[:normalize_key] = table.normalize_key? # XXX
     end
     assert_equal(properties, actual, table.inspect)
   end
