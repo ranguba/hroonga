@@ -73,7 +73,7 @@ module Hroonga
       end
 
       def default_table_flags
-        nil #XXX
+        {}
       end
 
       def column_type
@@ -92,12 +92,16 @@ module Hroonga
         :ShortText
       end
 
+      def column_source
+        @column_source ||= option("source")
+      end
+
       def column_flags
         @column_flags ||= flags_option("flags") || default_column_flags
       end
 
       def default_column_flags
-        nil #XXX
+        {}
       end
 
 
@@ -155,10 +159,12 @@ module Hroonga
 
       def flags_option(key)
         if query.include?(key)
+          flags = {}
           value = unescape(query[key])
-          value = value.split("|")
-          #XXX
-          nil
+          value.strip.split(/\s*\|\s*/).each do |flag|
+            flags[flag.to_sym] = true
+          end
+          flags
         else
           nil
         end

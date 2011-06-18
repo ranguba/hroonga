@@ -38,9 +38,23 @@ module Hroonga
       def create
         Groonga::Schema.define(:context => context) do |schema|
           schema.change_table(request.table_name) do |table|
-            table.column(request.column_name, request.value_type, :type => request.column_type)
+            table.column(request.column_name, request.value_type, options)
           end
         end
+      end
+
+      def options
+        @options ||= create_options
+      end
+
+      def create_options
+          options = {}
+          options[:type] = request.column_type
+          options[:source] = request.column_source
+          options[:with_section] = true if request.column_flags[:WITH_SECTION]
+          options[:with_weight] = true if request.column_flags[:WITH_WEIGHT]
+          options[:with_position] = true if request.column_flags[:WITH_POSITION]
+          options
       end
     end
   end
