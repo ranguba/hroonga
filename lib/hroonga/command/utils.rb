@@ -30,13 +30,21 @@ module Hroonga
       end
 
       def path
-        @path ||= create_path
+        @path ||= path_for_command
       end
 
-      def create_path
+      def path_for_command
         path = request.path
         path[self.class.path_prefix] = ""
         path
+      end
+
+      def query
+        @query ||= parse_query
+      end
+
+      def parse_query
+        Rack::Utils.parse_query(request.query_string)
       end
 
       def request_method
