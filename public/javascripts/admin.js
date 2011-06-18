@@ -588,20 +588,14 @@ var GroongaAdmin = {
     };
     GroongaAdmin.showloading(
       $.ajax({
-        url: '/d/select',
+        url: '/api/1/tables/' + GroongaAdmin.current_table + '/records',
         data: params,
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d, hide_dialog) < 0) { return; }
-          var rc = d.shift();
-          if (rc[0] != 0) {
-            alert('error');
-            return false;
-          }
           GroongaAdmin.set_recordlist_simple_query_is_valid(true);
-          var body = d.shift();
-          var recs = body.shift();
-          var all_count = recs.shift()[0];
+          var recs = d.records;
+          recs.unshift(d.columns);
+          var all_count = d.n_records;
           var pager;
           if (show_pager) {
             offset = params['offset'] || 0;
