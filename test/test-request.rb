@@ -114,6 +114,31 @@ class TestCommandRequest < Test::Unit::TestCase
       request = create_request("#{path_prefix}/Entries?key_type=UInt8&table_type=Hash")
       assert_equal(:UInt8, request.key_type)
     end
+
+    def test_table_flags
+      request = create_request("#{path_prefix}/Entries?table_type=Hash")
+      assert_equal({}, request.table_flags)
+
+      request = create_request("#{path_prefix}/Entries?flags=KEY_NORMALIZE")
+      assert_equal({
+                     :KEY_NORMALIZE => true,
+                   },
+                   request.table_flags)
+
+      request = create_request("#{path_prefix}/Entries?flags=KEY_NORMALIZE%7CKEY_WITH_SIS")
+      assert_equal({
+                     :KEY_NORMALIZE => true,
+                     :KEY_WITH_SIS => true,
+                   },
+                   request.table_flags)
+
+      request = create_request("#{path_prefix}/Entries?flags=+KEY_NORMALIZE+%7C+KEY_WITH_SIS+")
+      assert_equal({
+                     :KEY_NORMALIZE => true,
+                     :KEY_WITH_SIS => true,
+                   },
+                   request.table_flags)
+    end
   end
 
   class TestColumnName < TestCommandRequest
@@ -164,6 +189,31 @@ class TestCommandRequest < Test::Unit::TestCase
 
       request = create_request("#{path_prefix}/Entries?value_type=UInt8&column_type=Scalar")
       assert_equal(:UInt8, request.value_type)
+    end
+
+    def test_column_flags
+      request = create_request("#{path_prefix}/Entries/columns/my_column?table_type=Hash")
+      assert_equal({}, request.column_flags)
+
+      request = create_request("#{path_prefix}/Entries/columns/my_column?flags=WITH_SECTION")
+      assert_equal({
+                     :WITH_SECTION => true,
+                   },
+                   request.column_flags)
+
+      request = create_request("#{path_prefix}/Entries/columns/my_column?flags=WITH_SECTION%7CWITH_WEIGHT")
+      assert_equal({
+                     :WITH_SECTION => true,
+                     :WITH_WEIGHT => true,
+                   },
+                   request.column_flags)
+
+      request = create_request("#{path_prefix}/Entries/columns/my_column?flags=+WITH_WEIGHT+%7C+WITH_POSITION+")
+      assert_equal({
+                     :WITH_WEIGHT => true,
+                     :WITH_POSITION => true,
+                   },
+                   request.column_flags)
     end
   end
 
