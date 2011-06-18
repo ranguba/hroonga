@@ -65,7 +65,7 @@ class TestColumnCreate < TestHroongaCommand
     page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&flags=WITH_POSITION")
     assert_body({},
                 :content_type => :json)
-    assert_column("Terms", "Site_title",
+    assert_column("Terms", "blog_title",
                   :type => Groonga::IndexColumn,
                   :value_type => "Site",
                   :with_position => true)
