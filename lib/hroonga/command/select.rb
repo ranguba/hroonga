@@ -280,6 +280,7 @@ module Hroonga
 
     class SelectorByMethod < RecordSelector
       include ColumnTokenizer
+      attr_reader :column_list, :drilldown_column_list
 
       def select(query)
         table = @context[query.table_name]
@@ -345,12 +346,14 @@ module Hroonga
 
       def format(query, result)
         columns = query.output_columns || DEFAULT_OUTPUT_COLUMNS
-        format_result(result, parse_column_list(result, columns))
+        @column_list = parse_column_list(result, columns)
+        format_result(result, @column_list)
       end
 
       def drilldown_format(query, result)
         columns = query.drilldown_output_columns || DEFAULT_DRILLDOWN_OUTPUT_COLUMNS
-        format_result(result, parse_column_list(result, columns))
+        @drilldown_column_list = parse_column_list(result, columns)
+        format_result(result, @drilldown_column_list)
       end
 
       def drilldown(query, result)
