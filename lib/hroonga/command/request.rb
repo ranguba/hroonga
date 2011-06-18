@@ -60,6 +60,22 @@ module Hroonga
         :ShortText
       end
 
+      def default_tokenizer
+        @default_tokenizer ||= option("default_tokenizer") || default_default_tokenizer
+      end
+
+      def default_default_tokenizer
+        :TokenBigram
+      end
+
+      def table_flags
+        @table_flags ||= flags_option("flags") || default_table_flags
+      end
+
+      def default_table_flags
+        nil #XXX
+      end
+
       def column_type
         @column_type ||= snake_cased_option("column_type") || default_column_type
       end
@@ -74,6 +90,14 @@ module Hroonga
 
       def default_value_type
         :ShortText
+      end
+
+      def column_flags
+        @column_flags ||= flags_option("flags") || default_column_flags
+      end
+
+      def default_column_flags
+        nil #XXX
       end
 
 
@@ -124,6 +148,17 @@ module Hroonga
         if query.include?(key)
           value = unescape(query[key])
           to_snake_case(value).to_sym
+        else
+          nil
+        end
+      end
+
+      def flags_option(key)
+        if query.include?(key)
+          value = unescape(query[key])
+          value = value.split("|")
+          #XXX
+          nil
         else
           nil
         end
