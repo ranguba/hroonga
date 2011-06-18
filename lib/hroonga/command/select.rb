@@ -54,7 +54,7 @@ module Hroonga
       def match_columns
         #raise "unsupported: #{@options[:match_columns].inspect}" if @options[:match_columns] =~ /\b/ # XXX
 
-        @options[:match_columns]
+        @options[:match_columns] || "_key"
       end
 
       def filter
