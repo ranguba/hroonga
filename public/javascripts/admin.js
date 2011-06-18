@@ -34,6 +34,19 @@ function type_filter(value, type) {
   }
 }
 
+function column_type_filter(value, type) {
+  switch (type) {
+    case 'GRN_OBJ_COLUMN_SCALAR':
+    return "Scalar";
+    case 'GRN_OBJ_COLUMN_VECTOR':
+    return "Vector";
+    case 'GRN_OBJ_COLUMN_INDEX':
+    return "Index";
+  default:
+    return value;
+  }
+}
+
 function escapeHTML(str) {
   return str.replace(/&/g, "&amp;")
             .replace(/"/g, "&quot;")
@@ -822,13 +835,13 @@ var GroongaAdmin = {
     GroongaAdmin.showloading(
       $.ajax({
         url: '/api/1/tables/' + $('#createtable-name').val(),
+        type: 'POST',
         data: {
           name: $('#createtable-name').val(),
           'flags': flags,
           key_type: $('#createtable-key-type').val(),
           value_type: $('#createtable-value-type').val(),
-          default_tokenizer: $('#createtable-default-tokenizer').val(),
-          _method: "POST"
+          default_tokenizer: $('#createtable-default-tokenizer').val()
         },
         dataType: 'json',
         success: function(d) {
@@ -850,24 +863,22 @@ var GroongaAdmin = {
     $('#createcolumn-ii-flags>input:checked').each(function() {
       flags |= Groonga[$(this).val()];
     });
-    flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
     d = {
-      table: GroongaAdmin.current_table,
-      name: $('#createcolumn-name').val(),
-      'flags': flags,
-      type: $('#createcolumn-type').val()
+      flags: flags,
+      column_type: column_type_filter($('#createcolumn-column-type').val()),
+      value_type: $('#createcolumn-column-type').val()
     };
     if ($('#createcolumn-source').val()) {
       d['source'] = $('#createcolumn-source').val();
     }
     GroongaAdmin.showloading(
       $.ajax({
-        url: '/d/column_create',
+        url: '/api/1/tables/' + GroongaAdmin.current_table + '/columns/' + $('#createcolumn-name').val(),
+        type: 'POST',
         data: d,
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
           GroongaAdmin.hideloading();
           alert('カラムを作成しました。');
         },
