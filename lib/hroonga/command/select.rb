@@ -255,7 +255,7 @@ module Hroonga
       attr_accessor :database_path
     end
 
-    class Selector
+    class RecordSelector
       attr_reader :context, :database_path
       def initialize(context, database_path)
         @context = context
@@ -268,7 +268,7 @@ module Hroonga
       end
     end
 
-    class SelectorByCommand < Selector
+    class SelectorByCommand < RecordSelector
       def select(query)
         parameters = query.parameters.merge(:cache => :no)
         parameters[:sortby] ||= :_id
@@ -278,7 +278,7 @@ module Hroonga
       end
     end
 
-    class SelectorByMethod < Selector
+    class SelectorByMethod < RecordSelector
       include ColumnTokenizer
 
       def select(query)
