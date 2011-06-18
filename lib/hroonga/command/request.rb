@@ -37,46 +37,17 @@ module Hroonga
         @command_path ||= parse_command_path
       end
 
-      def parse_command_path
-        command_path = path
-        command_path[Dispatcher.path_prefix] = ""
-        command_path
-      end
-
 
       def table_name
         @table_name ||= parse_table_name
-      end
-
-      def parse_table_name
-        name = command_path.split("/")[1]
-        unescape(name)
       end
 
       def column_name
         @column_name ||= parse_column_name
       end
 
-      def parse_column_name
-        name_match = command_path.match(/\/columns\/([^\/+])/)
-        if name_match
-          unescape(name_match.to_a[1])
-        else
-          nil
-        end
-      end
-
       def record_key
         @record_key ||= parse_record_key
-      end
-
-      def parse_record_key
-        key_match = command_path.match(/\/records\/([^\/+])/)
-        if key_match
-          unescape(key_match.to_a[1])
-        else
-          nil
-        end
       end
 
 
@@ -98,6 +69,35 @@ module Hroonga
 
 
       private
+      def parse_command_path
+        command_path = path
+        command_path[Dispatcher.path_prefix] = ""
+        command_path
+      end
+
+      def parse_table_name
+        name = command_path.split("/")[1]
+        unescape(name)
+      end
+
+      def parse_column_name
+        name_match = command_path.match(/\/columns\/([^\/+])/)
+        if name_match
+          unescape(name_match.to_a[1])
+        else
+          nil
+        end
+      end
+
+      def parse_record_key
+        key_match = command_path.match(/\/records\/([^\/+])/)
+        if key_match
+          unescape(key_match.to_a[1])
+        else
+          nil
+        end
+      end
+
       def unescape(string)
         Rack::Utils.unescape(string)
       end
