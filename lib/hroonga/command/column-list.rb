@@ -43,33 +43,35 @@ module Hroonga
         ColumnList.get_column_array(table)
       end
 
-      def self.get_column_array(table)
-        ColumnList.get_special_column_array(table).
-          concat(ColumnList.columns_to_hash(table.columns))
-      end
-
-      def self.columns_to_hash(columns)
-        columns.map { |column| ColumnList.column_to_hash(column) }
-      end
-
-      def self.column_to_hash(column)
-        [column.local_name, column.range.name]
-      end
-
-      def self.get_special_column_hash(table, name)
-        column = table.column(name)
-        if column
-          [name, column.range.name]
+      class << self
+        def get_column_array(table)
+          ColumnList.get_special_column_array(table).
+            concat(ColumnList.columns_to_hash(table.columns))
         end
-      end
 
-      def self.get_special_column_array(table)
-        array = []
-        column = ColumnList.get_special_column_hash(table, "_id")
-        array.push(column) if column
-        column = ColumnList.get_special_column_hash(table, "_key")
-        array.push(column) if column && table.support_key?
-        array
+        def columns_to_hash(columns)
+          columns.map { |column| ColumnList.column_to_hash(column) }
+        end
+
+        def column_to_hash(column)
+          [column.local_name, column.range.name]
+        end
+
+        def get_special_column_hash(table, name)
+          column = table.column(name)
+          if column
+            [name, column.range.name]
+          end
+        end
+
+        def get_special_column_array(table)
+          array = []
+          column = ColumnList.get_special_column_hash(table, "_id")
+          array.push(column) if column
+          column = ColumnList.get_special_column_hash(table, "_key")
+          array.push(column) if column && table.support_key?
+          array
+        end
       end
     end
   end
