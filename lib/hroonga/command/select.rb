@@ -255,7 +255,7 @@ module Hroonga
       attr_accessor :database_path
     end
 
-    class Selector
+    class RecordSelector
       attr_reader :context, :database_path
       def initialize(context, database_path)
         @context = context
@@ -268,7 +268,7 @@ module Hroonga
       end
     end
 
-    class SelectorByCommand < Selector
+    class SelectorByCommand < RecordSelector
       def select(query)
         parameters = query.parameters.merge(:cache => :no)
         parameters[:sortby] ||= :_id
@@ -278,7 +278,7 @@ module Hroonga
       end
     end
 
-    class SelectorByMethod < Selector
+    class SelectorByMethod < RecordSelector
       include ColumnTokenizer
 
       def select(query)
@@ -1034,38 +1034,40 @@ module Hroonga
   end
 end
 
-options = {
-  :method => [:measure_time],
-}
+if __FILE__ == $0
+  options = {
+    :method => [:measure_time],
+  }
 
-OptionParser.new do |parser|
-  parser.on("--repeat=COUNT",
-            "repeat each query COUNT times",
-            "(default: #{Hroonga::Command::BenchmarkRunner::DEFAULT_REPEAT_COUNT})") do |count|
-    options[:repeat_count] = count.to_i
+  OptionParser.new do |parser|
+    parser.on("--repeat=COUNT",
+              "repeat each query COUNT times",
+              "(default: #{Hroonga::Command::BenchmarkRunner::DEFAULT_REPEAT_COUNT})") do |count|
+      options[:repeat_count] = count.to_i
+    end
+
+    parser.on("--command=COMMAND",
+              "use COMMAND instead of default predefined ones") do |command|
+      options[:query] = Query.parse_groonga_query_log(command)
+    end
+
+    parser.on("--database=PATH",
+              "use database located at PATH",
+              "(default: #{Hroonga::Command::BenchmarkRunner::DEFAULT_WIKIPEDIA_DATABASE_LOCATION})") do |command|
+      options[:database_path] = command
+    end
+  end.parse!(ARGV)
+
+  runner = Hroonga::Command::BenchmarkRunner.new(options).tap do |runner|
+    Hroonga::Command::BenchmarkRunner.select_benchmark_default_setup(runner, options)
+    if options[:query].nil?
+      Hroonga::Command::BenchmarkRunner.load_predefined_queries(runner, options)
+    end
   end
 
-  parser.on("--command=COMMAND",
-            "use COMMAND instead of default predefined ones") do |command|
-    options[:query] = Query.parse_groonga_query_log(command)
+  if options[:query]
+    runner.run(options[:query])
+  else
+    runner.run
   end
-
-  parser.on("--database=PATH",
-            "use database located at PATH",
-            "(default: #{Hroonga::Command::BenchmarkRunner::DEFAULT_WIKIPEDIA_DATABASE_LOCATION})") do |command|
-    options[:database_path] = command
-  end
-end.parse!(ARGV)
-
-runner = Hroonga::Command::BenchmarkRunner.new(options).tap do |runner|
-  Hroonga::Command::BenchmarkRunner.select_benchmark_default_setup(runner, options)
-  if options[:query].nil?
-    Hroonga::Command::BenchmarkRunner.load_predefined_queries(runner, options)
-  end
-end
-
-if options[:query]
-  runner.run(options[:query])
-else
-  runner.run
 end
