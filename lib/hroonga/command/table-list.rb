@@ -16,47 +16,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require "json"
+require "hroonga/command/list"
 
 module Hroonga
   module Command
-    class TableList
-      include Utils
-
-      def initialize(config)
-        @config = config
-      end
-
-      def call(env)
-        @env = env
-        process_request
-      end
-
-      private
-      def process_request
-        response = Rack::Response.new
-
-        response["Content-Type"] = "application/json"
-        response.write(to_json)
-
-        response
-      end
-
-      def to_json
-        JSON.generate(to_hash)
-      end
-
+    class TableList < List
       def to_hash
-        { "tables" => tables_hash }
-      end
-
-      def database
-        context.database
-      end
-
-      def tables
-        @tables ||= database.find_all do |object|
-          object.class <= Groonga::Table
-        end
+        {"tables" => tables_hash}
       end
 
       def tables_hash
@@ -80,14 +46,9 @@ module Hroonga
         }
       end
 
+      private
       def get_table_type(table)
         table.class.name.split("::").last
-      end
-
-      class << self
-        def path_prefix
-          "#{Dispatcher.path_prefix}"
-        end
       end
     end
   end
