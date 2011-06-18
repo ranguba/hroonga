@@ -821,17 +821,17 @@ var GroongaAdmin = {
     flags |= Groonga[$('#createtable-key-index').val()];
     GroongaAdmin.showloading(
       $.ajax({
-        url: '/d/table_create',
+        url: '/api/1/tables/' + $('#createtable-name').val(),
         data: {
           name: $('#createtable-name').val(),
           'flags': flags,
           key_type: $('#createtable-key-type').val(),
           value_type: $('#createtable-value-type').val(),
-          default_tokenizer: $('#createtable-default-tokenizer').val()
+          default_tokenizer: $('#createtable-default-tokenizer').val(),
+          _method: "POST"
         },
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
           GroongaAdmin.hideloading();
           alert('テーブルを作成しました。');
           GroongaAdmin.update_tablelist();
