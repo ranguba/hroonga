@@ -38,13 +38,59 @@ class TestTableCreate < TestHroongaCommand
     assert_table("Entries")
   end
 
+  def test_array_table
+    assert_no_table("Entries")
+    page.driver.post("/api/1/tables/Entries?table_type=Array")
+    assert_body({},
+                :content_type => :json)
+    assert_table("Entries",
+                 :type => Groonga::Array)
+  end
+
+  def test_hash_table
+    assert_no_table("Entries")
+    page.driver.post("/api/1/tables/Entries?table_type=Hash&key_type=ShortText&default_tokenizer=TokenBigram")
+    assert_body({},
+                :content_type => :json)
+    assert_table("Entries",
+                 :type => Groonga::Hash,
+                 :key_type => "ShortText",
+                 :default_tokenizer => "TokenBigram")
+  end
+
+  def test_terms_table
+    assert_no_table("Terms")
+    page.driver.post("/api/1/tables/Terms?table_type=PatriciaTrie&key_type=ShortText&default_tokenizer=TokenBigram&flags=KEY_NORMALIZE")
+    assert_body({},
+                :content_type => :json)
+    assert_table("Terms",
+                 :type => Groonga::PatriciaTrie,
+                 :key_type => "ShortText",
+                 :default_tokenizer => "TokenBigram",
+                 :flags => "KEY_NORMALIZE")
+  end
+
   private
   def assert_no_table(name)
     assert_nil(@context[name], @context.inspect)
   end
 
-  def assert_table(name)
+  def assert_table(name, properties={})
     table = @context[name]
     assert_not_nil(table, @context.inspect)
+    actual = {}
+    if properties.include?(:type)
+      actual[:type] = table.class
+    end
+    if properties.include?(:key_type)
+      actual[:key_type] = table.domain.name
+    end
+    if properties.include?(:default_tokenizer)
+      actual[:default_tokenizer] = table.default_tokenizer.name
+    end
+    if properties.include?(:flags)
+      actual[:flags] = table.flags # XXX
+    end
+    assert_equal(properties, actual, table.inspect)
   end
 end
