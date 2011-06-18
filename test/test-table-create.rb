@@ -58,7 +58,7 @@ class TestTableCreate < TestHroongaCommand
                  :default_tokenizer => "TokenBigram")
   end
 
-  def test_terms_table
+  def test_patricia_trie_table
     assert_no_table("Terms")
     page.driver.post("/api/1/tables/Terms?table_type=PatriciaTrie&key_type=ShortText&default_tokenizer=TokenBigram&flags=KEY_NORMALIZE")
     assert_body({},
