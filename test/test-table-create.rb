@@ -35,7 +35,7 @@ class TestTableCreate < TestHroongaCommand
     page.driver.post("/api/1/tables/Entries")
     assert_body({},
                 :content_type => :json)
-    assert_table_exist("Entries")
+    assert_table("Entries")
   end
 
   private
@@ -43,7 +43,7 @@ class TestTableCreate < TestHroongaCommand
     assert_nil(@context[name], @context.inspect)
   end
 
-  def assert_table_exist(name)
+  def assert_table(name)
     table = @context[name]
     assert_not_nil(table, @context.inspect)
   end
