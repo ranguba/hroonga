@@ -113,8 +113,12 @@ module Hroonga
       end
 
       def parse_table_name
-        name = command_path.split("/")[1]
-        unescape(name)
+        name_match = command_path.match(/\A\/([^\/]+)/)
+        if name_match
+          unescape(name_match.to_a[1])
+        else
+          nil
+        end
       end
 
       def parse_column_name
