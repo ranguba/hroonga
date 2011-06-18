@@ -17,6 +17,7 @@
 
 require "groonga"
 require "hroonga/command/request"
+require "hroonga/command/response"
 
 module Hroonga
   module Command
@@ -29,6 +30,14 @@ module Hroonga
 
       def request
         @request ||= Request.new(@env)
+      end
+
+      def successfully_processed_response
+        @successfully_processed_response = create_successfully_processed_response
+      end
+
+      def create_successfully_processed_response
+        response = Response.new({})
       end
     end
   end

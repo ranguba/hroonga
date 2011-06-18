@@ -15,30 +15,16 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require "json"
+
 module Hroonga
   module Command
-    class TableCreate
-      include Utils
-
-      def initialize(config)
-        @config = config
-      end
-
-      def call(env)
-        @env = env
-        process_request
-      end
-
-      private
-      def process_request
-        create
-        successfully_processed_response
-      end
-
-      def create
-        Groonga::Schema.define(:context => context) do |schema|
-          schema.create_table(request.table_name, :type => request.table_type, :key_type => request.key_type)
-        end
+    class Response < Rack::Response
+      def initialize(body=nil, status=200, headers={})
+        headers["Content-Type"] = "application/json"
+        json_body = []
+        json_body << JSON.generate(body) if body
+        super(json_body, status, headers)
       end
     end
   end

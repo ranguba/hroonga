@@ -15,8 +15,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-require "groonga"
-
 module Hroonga
   module Command
     class Request < Rack::Request
@@ -92,7 +90,7 @@ module Hroonga
       end
 
       def parse_column_name
-        name_match = command_path.match(/\/columns\/([^\/+])/)
+        name_match = command_path.match(/\/columns\/([^\/]+)/)
         if name_match
           unescape(name_match.to_a[1])
         else
@@ -101,7 +99,7 @@ module Hroonga
       end
 
       def parse_record_key
-        key_match = command_path.match(/\/records\/([^\/+])/)
+        key_match = command_path.match(/\/records\/([^\/]+)/)
         if key_match
           unescape(key_match.to_a[1])
         else

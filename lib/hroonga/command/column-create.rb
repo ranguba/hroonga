@@ -17,7 +17,7 @@
 
 module Hroonga
   module Command
-    class TableCreate
+    class ColumnCreate
       include Utils
 
       def initialize(config)
@@ -37,7 +37,9 @@ module Hroonga
 
       def create
         Groonga::Schema.define(:context => context) do |schema|
-          schema.create_table(request.table_name, :type => request.table_type, :key_type => request.key_type)
+          schema.change_table(request.table_name) do |table|
+            table.column(request.column_name, request.value_type, :type => request.column_type)
+          end
         end
       end
     end

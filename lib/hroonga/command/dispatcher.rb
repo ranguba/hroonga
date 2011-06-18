@@ -19,6 +19,7 @@ require "hroonga/command/utils"
 require "hroonga/command/selector"
 require "hroonga/command/table-create"
 require "hroonga/command/record-select"
+require "hroonga/command/column-create"
 
 module Hroonga
   module Command
