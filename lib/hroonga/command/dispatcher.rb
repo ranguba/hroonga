@@ -51,7 +51,6 @@ module Hroonga
         else
           default_command
         end
-        TableCreate
       end
 
       def dispatch_table_command

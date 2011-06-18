@@ -52,7 +52,7 @@ module Hroonga
       end
 
       def request_method
-        request.env["REQUEST_METHOD"]
+        query["_method"] || request.env["REQUEST_METHOD"]
       end
     end
   end
