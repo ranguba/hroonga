@@ -40,7 +40,7 @@ class TestColumnCreate < TestHroongaCommand
     assert_column("Site", "my_column")
   end
 
-  def test_short_text_column
+  def test_scalar_short_text_column
     setup_table("Site", :type => :hash, :key_type => :ShortText)
 
     assert_no_column("Site", "title")
@@ -49,7 +49,21 @@ class TestColumnCreate < TestHroongaCommand
                 :content_type => :json)
     assert_column("Site", "title",
                   :type => Groonga::VariableSizeColumn,
-                  :value_type => "ShortText")
+                  :value_type => "ShortText",
+                  :vector => false)
+  end
+
+  def test_vector_short_text_column
+    setup_table("Site", :type => :hash, :key_type => :ShortText)
+
+    assert_no_column("Site", "title")
+    page.driver.post("/api/1/tables/Site/columns/title?column_type=Vector&value_type=ShortText")
+    assert_body({},
+                :content_type => :json)
+    assert_column("Site", "title",
+                  :type => Groonga::VariableSizeColumn,
+                  :value_type => "ShortText",
+                  :vector => true)
   end
 
   def test_index_column
@@ -68,7 +82,9 @@ class TestColumnCreate < TestHroongaCommand
     assert_column("Terms", "blog_title",
                   :type => Groonga::IndexColumn,
                   :value_type => "Site",
-                  :with_position => true)
+                  :with_section => false,
+                  :with_position => true,
+                  :with_weight => false)
   end
 
   private
@@ -104,6 +120,15 @@ class TestColumnCreate < TestHroongaCommand
     end
     if properties.include?(:value_type)
       actual[:value_type] = column.range.name
+    end
+    if properties.include?(:vector)
+      actual[:vector] = column.vector?
+    end
+    if properties.include?(:with_weight)
+      actual[:with_weight] = column.with_weight?
+    end
+    if properties.include?(:with_section)
+      actual[:with_section] = column.with_section?
     end
     if properties.include?(:with_position)
       actual[:with_position] = column.with_position?
