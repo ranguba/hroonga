@@ -56,7 +56,7 @@ function column_flag_filter(flag) {
     case 'GRN_OBJ_WITH_POSITION':
     return 'WITH_POSITION';
   default:
-    return value;
+    return flag;
   }
 }
 
