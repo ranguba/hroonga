@@ -36,6 +36,17 @@ module Hroonga
       end
 
       def load
+        if request.record_key.nil?
+          request.records.each do |key, record|
+            table.add(key, record)
+          end
+        else
+          table.add(request.record_key, request.record)
+        end
+      end
+
+      def table
+        @table ||= @config.context[request.table_name]
       end
     end
   end

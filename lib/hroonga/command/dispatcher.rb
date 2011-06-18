@@ -50,7 +50,7 @@ module Hroonga
           dispatch_table_command
         when /\A\/[^\/\?]+\/columns\/[^\/\?]+\/?\z/
           dispatch_column_command
-        when /\A\/[^\/\?]+\/records\/?\z/
+        when /\A\/[^\/\?]+\/records(\/[^\/\?]+)?\/?\z/
           dispatch_record_command
         when /\A\/[^\/\?]+\/columns\/?\z/
           ColumnList
