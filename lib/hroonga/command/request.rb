@@ -60,6 +60,22 @@ module Hroonga
         :ShortText
       end
 
+      def default_tokenizer
+        @default_tokenizer ||= option("default_tokenizer") || default_default_tokenizer
+      end
+
+      def default_default_tokenizer
+        :TokenBigram
+      end
+
+      def table_flags
+        @table_flags ||= flags_option("flags") || default_table_flags
+      end
+
+      def default_table_flags
+        {}
+      end
+
       def column_type
         @column_type ||= snake_cased_option("column_type") || default_column_type
       end
@@ -76,6 +92,18 @@ module Hroonga
         :ShortText
       end
 
+      def column_source
+        @column_source ||= option("source")
+      end
+
+      def column_flags
+        @column_flags ||= flags_option("flags") || default_column_flags
+      end
+
+      def default_column_flags
+        {}
+      end
+
 
       private
       def parse_command_path
@@ -85,8 +113,12 @@ module Hroonga
       end
 
       def parse_table_name
-        name = command_path.split("/")[1]
-        unescape(name)
+        name_match = command_path.match(/\A\/([^\/]+)/)
+        if name_match
+          unescape(name_match.to_a[1])
+        else
+          nil
+        end
       end
 
       def parse_column_name
@@ -124,6 +156,19 @@ module Hroonga
         if query.include?(key)
           value = unescape(query[key])
           to_snake_case(value).to_sym
+        else
+          nil
+        end
+      end
+
+      def flags_option(key)
+        if query.include?(key)
+          flags = {}
+          value = unescape(query[key])
+          value.strip.split(/\s*\|\s*/).each do |flag|
+            flags[flag.to_sym] = true
+          end
+          flags
         else
           nil
         end

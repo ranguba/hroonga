@@ -33,4 +33,27 @@ ENV["RACK_ENV"] = "test"
 module HroongaTestUtils
 end
 
+class TestHroongaCommand < Test::Unit::TestCase
+  include Capybara
+
+  def body
+    page.driver.response.body
+  end
+
+  def setup_config
+    @config = Hroonga::Configuration.new
+    @config.add_load_path(Pathname(__FILE__).dirname.parent)
+    @config.load("etc/hroonga.conf")
+    @config.setup_database
+  end
+
+  def teardown_database
+    context = @config.context
+    database = context.database
+    database_path = database.path
+    database.close
+    FileUtils.rm_rf(Pathname(database_path).dirname.to_s)
+  end
+end
+
 require 'models/entry'
