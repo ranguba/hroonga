@@ -63,14 +63,15 @@ module Hroonga
 
       def parse_table_type
         if query.include?("table_type")
-          CGI.unescape(query["table_type"]).to_sym
+          table_type = CGI.unescape(query["table_type"])
+          table_type.capitalize.to_sym
         else
           default_table_type
         end
       end
 
       def default_table_type
-        :hash
+        :Hash
       end
 
       def key_type
