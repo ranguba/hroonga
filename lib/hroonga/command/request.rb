@@ -20,11 +20,6 @@ require "groonga"
 module Hroonga
   module Command
     class Request < Rack::Request
-      DEFAULT_TABLE_TYPE = :hash
-      DEFAULT_KEY_TYPE = :ShortText
-      DEFAULT_COLUMN_TYPE = :scalar
-      DEFAULT_VALUE_TYPE = :ShortText
-
       def method
         (query["_method"] || env["REQUEST_METHOD"]).upcase
       end
@@ -52,19 +47,35 @@ module Hroonga
 
 
       def table_type
-        @table_type ||= snake_cased_option("table_type") || DEFAULT_TABLE_TYPE
+        @table_type ||= snake_cased_option("table_type") || default_table_type
+      end
+
+      def default_table_type
+        :hash
       end
 
       def key_type
-        @key_type ||= option("key_type") || DEFAULT_KEY_TYPE
+        @key_type ||= option("key_type") || default_key_type
+      end
+
+      def default_key_type
+        :ShortText
       end
 
       def column_type
-        @column_type ||= snake_cased_option("column_type") || DEFAULT_COLUMN_TYPE
+        @column_type ||= snake_cased_option("column_type") || default_column_type
+      end
+
+      def default_column_type
+        :scalar
       end
 
       def value_type
-        @value_type ||= option("value_type") || DEFAULT_VALUE_TYPE
+        @value_type ||= option("value_type") || default_value_type
+      end
+
+      def default_value_type
+        :ShortText
       end
 
 
