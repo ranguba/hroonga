@@ -37,8 +37,22 @@ module Hroonga
 
       def create
         Groonga::Schema.define(:context => context) do |schema|
-          schema.create_table(request.table_name, :type => request.table_type, :key_type => request.key_type)
+          schema.create_table(request.table_name, options)
         end
+      end
+
+      def options
+        @options ||= create_options
+      end
+
+      def create_options
+        options = {}
+        options[:type] = request.table_type
+        options[:key_type] = request.key_type
+        options[:default_tokenizer] = request.default_tokenizer
+        options[:key_normalize] = true if request.table_flags[:KEY_NORMALIZE]
+        options[:key_with_sis] = true if request.table_flags[:KEY_WITH_SIS]
+        options
       end
     end
   end

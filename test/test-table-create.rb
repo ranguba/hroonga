@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env ruby
 #
 # Copyright (C) 2011  SHIMODA Hiroshi <shimoda@clear-code.com>
 #
@@ -15,30 +15,36 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-require "hroonga/command/select"
+class TestTableCreate < TestHroongaCommand
+  def setup
+    setup_config
+    @config.setup_database
 
-module Hroonga
-  module Command
-    class RecordSelect
-      include Utils
+    @context = Groonga::Context.new(:encoding => :utf8)
+    @context.open_database(@config.database_path)
 
-      def initialize(config)
-        @config = config
-      end
+    Capybara.app = Hroonga::Command::TableCreate.new(@config)
+  end
 
-      def call(env)
-        @env = env
-        selector = SelectorByMethod.new(context, context.database.path)
-        result = selector.select(Query.new(:table => request.table_name, :output_columns => "_id _key"))
+  def teardown
+    teardown_database
+  end
 
-        response = Rack::Response.new
-        response["Content-Type"] = "application/json"
-        response.write(JSON.generate({
-          :columns => [], #XXX
-          :records => result.formatted_result,
-        }))
-        response
-      end
-    end
+  def test_no_option
+    assert_no_table("Entries")
+    page.driver.post("/api/1/tables/Entries")
+    assert_body({},
+                :content_type => :json)
+    assert_table("Entries")
+  end
+
+  private
+  def assert_no_table(name)
+    assert_nil(@context[name], @context.inspect)
+  end
+
+  def assert_table(name)
+    table = @context[name]
+    assert_not_nil(table, @context.inspect)
   end
 end

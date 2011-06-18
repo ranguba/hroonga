@@ -15,24 +15,15 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-class TestSelect < Test::Unit::TestCase
-  include Capybara
-
+class TestSelect < TestHroongaCommand
   def setup
-    @config = Hroonga::Configuration.new
-    @config.add_load_path(Pathname(__FILE__).dirname.parent)
-    @config.load("etc/hroonga.conf")
-    @config.setup_database
+    setup_config
     setup_database
     Capybara.app = Hroonga::Command::Selector.new(@config)
   end
 
   def teardown
-    context = @config.context
-    database = context.database
-    database_path = database.path
-    database.close
-    FileUtils.rm_rf(Pathname(database_path).dirname.to_s)
+    teardown_database
   end
 
   private
