@@ -46,13 +46,13 @@ module Hroonga
       end
 
       def create_options
-          options = {}
-          options[:type] = request.table_type
-          options[:key_type] = request.key_type
-          options[:default_tokenizer] = request.default_tokenizer
-          options[:key_normalize] = true if request.table_flags[:KEY_NORMALIZE]
-          options[:key_with_sis] = true if request.table_flags[:KEY_WITH_SIS]
-          options
+        options = {}
+        options[:type] = request.table_type
+        options[:key_type] = request.key_type
+        options[:default_tokenizer] = request.default_tokenizer
+        options[:key_normalize] = true if request.table_flags[:KEY_NORMALIZE]
+        options[:key_with_sis] = true if request.table_flags[:KEY_WITH_SIS]
+        options
       end
     end
   end
