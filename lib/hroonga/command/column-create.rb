@@ -36,7 +36,6 @@ module Hroonga
       end
 
       def create
-      p options.inspect
         Groonga::Schema.define(:context => context) do |schema|
           schema.change_table(request.table_name) do |table|
             if request.column_type == :index
@@ -56,7 +55,7 @@ module Hroonga
         options = {}
         options[:type] = request.column_type
         options[:name] = request.column_name if request.column_type == :index
-        if !request.column_compress.nil? && request.column_compress != ""
+        if !request.column_compress.nil? && !request.column_compress.empty?
           options[:compress] = request.column_compress
         end
         options[:with_section] = true if request.column_flags[:WITH_SECTION]
