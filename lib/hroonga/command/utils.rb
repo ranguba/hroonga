@@ -15,50 +15,20 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-require "cgi"
 require "groonga"
+require "hroonga/command/request"
 
 module Hroonga
   module Command
     module Utils
       include Rack::Utils
 
-      def to_snake_case(string)
-        string.gsub(/([A-Z])/, "_\\1").downcase.sub(/\A_/, "")
-      end
-
-      def to_table_type(string)
-        to_snake_case(string)
-      end
-
-      def to_column_type(string)
-        to_snake_case(string)
-      end
-
       def context
         @config.context
       end
 
       def request
-        @request ||= Rack::Request.new(@env)
-      end
-
-      def path
-        @path ||= path_for_command
-      end
-
-      def path_for_command
-        path = request.path
-        path[self.class.path_prefix] = ""
-        path
-      end
-
-      def query
-        @query ||= parse_query(request.query_string)
-      end
-
-      def request_method
-        query["_method"] || request.env["REQUEST_METHOD"]
+        @request ||= Request.new(@env)
       end
     end
   end
