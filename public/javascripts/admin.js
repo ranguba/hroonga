@@ -60,6 +60,19 @@ function column_flag_filter(flag) {
   }
 }
 
+function column_compress_filter(type) {
+  switch (type) {
+    case 'GRN_OBJ_COMPRESS_NONE':
+    return '';
+    case 'GRN_OBJ_COMPRESS_ZLIB':
+    return 'Zlib';
+    case 'GRN_OBJ_COMPRESS_LZO':
+    return 'Lzo';
+  default:
+    return type;
+  }
+}
+
 function escapeHTML(str) {
   return str.replace(/&/g, "&amp;")
             .replace(/"/g, "&quot;")
@@ -870,11 +883,11 @@ var GroongaAdmin = {
     $('#createcolumn-ii-flags>input:checked').each(function() {
       flags.push(column_flag_filter($(this).val()));
     });
-    // flags |= Groonga[$('#createcolumn-column-compress').val()]; // XXX need to be migrated
     d = {
       flags: flags.join('|'),
       column_type: column_type_filter($('#createcolumn-column-type').val()),
-      value_type: $('#createcolumn-type').val()
+      value_type: $('#createcolumn-type').val(),
+      compress: column_compress_filter($('#createcolumn-compress').val())
     };
     if ($('#createcolumn-source').val()) {
       d['source'] = $('#createcolumn-source').val();

@@ -94,6 +94,10 @@ module Hroonga
         @column_source ||= option("source")
       end
 
+      def column_compress
+        @column_compress ||= snake_cased_option("compress")
+      end
+
       def column_flags
         @column_flags ||= flags_option("flags") || default_column_flags
       end
