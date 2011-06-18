@@ -27,10 +27,16 @@ module Hroonga
       end
 
       def call(env)
+        @env = env
+        selector = SelectorByMethod.new(context, context.database.path)
+        result = selector.select(Query.new(:table => request.table_name, :output_columns => "_id _key"))
+
         response = Rack::Response.new
         response["Content-Type"] = "application/json"
-        response
-        response.write(JSON.generate({}))
+        response.write(JSON.generate({
+          :columns => [], #XXX
+          :records => result.formatted_result,
+        }))
         response
       end
     end
