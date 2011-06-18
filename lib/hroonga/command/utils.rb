@@ -21,6 +21,8 @@ require "groonga"
 module Hroonga
   module Command
     module Utils
+      include Rack::Utils
+
       def context
         @config.context
       end
@@ -40,11 +42,7 @@ module Hroonga
       end
 
       def query
-        @query ||= parse_query
-      end
-
-      def parse_query
-        Rack::Utils.parse_query(request.query_string)
+        @query ||= parse_query(request.query_string)
       end
 
       def request_method

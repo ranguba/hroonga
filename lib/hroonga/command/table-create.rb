@@ -54,33 +54,33 @@ module Hroonga
       def parse_name
         name = path
         name["/"] = ""
-        CGI.unescape(name)
+        unescape(name)
       end
 
       def table_type
-        @type ||= parse_table_type
+        @table_type ||= parse_table_type
       end
 
       def parse_table_type
         if query.include?("table_type")
-          table_type = CGI.unescape(query["table_type"])
-          table_type.capitalize.to_sym
+          table_type = unescape(query["table_type"])
+          table_type.downcase.to_sym
         else
           default_table_type
         end
       end
 
       def default_table_type
-        :Hash
+        :hash
       end
 
       def key_type
-        @type ||= parse_type
+        @key_type ||= parse_key_type
       end
 
       def parse_key_type
         if query.include?("key_type")
-          CGI.unescape(query["key_type"]).to_sym
+          unescape(query["key_type"]).to_sym
         else
           default_key_type
         end
@@ -93,7 +93,7 @@ module Hroonga
       def parse_name
         name = path
         name["/"] = ""
-        CGI.unescape(name)
+        unescape(name)
       end
 
       class << self
