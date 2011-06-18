@@ -36,6 +36,7 @@ end
 class TestHroongaCommand < Test::Unit::TestCase
   include Capybara
 
+  private
   def body
     page.driver.response.body
   end
@@ -53,6 +54,11 @@ class TestHroongaCommand < Test::Unit::TestCase
     database_path = database.path
     database.close
     FileUtils.rm_rf(Pathname(database_path).dirname.to_s)
+  end
+
+  def assert_success
+    assert_body({},
+                :content_type => :json)
   end
 end
 

@@ -33,16 +33,14 @@ class TestTableCreate < TestHroongaCommand
   def test_no_option
     assert_no_table("Entries")
     page.driver.post("/api/1/tables/Entries")
-    assert_body({},
-                :content_type => :json)
+    assert_success
     assert_table("Entries")
   end
 
   def test_array_table
     assert_no_table("Entries")
     page.driver.post("/api/1/tables/Entries?table_type=Array")
-    assert_body({},
-                :content_type => :json)
+    assert_success
     assert_table("Entries",
                  :type => Groonga::Array)
   end
@@ -50,8 +48,7 @@ class TestTableCreate < TestHroongaCommand
   def test_hash_table
     assert_no_table("Entries")
     page.driver.post("/api/1/tables/Entries?table_type=Hash&key_type=ShortText&default_tokenizer=TokenBigram")
-    assert_body({},
-                :content_type => :json)
+    assert_success
     assert_table("Entries",
                  :type => Groonga::Hash,
                  :key_type => "ShortText",
@@ -62,8 +59,7 @@ class TestTableCreate < TestHroongaCommand
   def test_patricia_trie_table
     assert_no_table("Terms")
     page.driver.post("/api/1/tables/Terms?table_type=PatriciaTrie&key_type=ShortText&default_tokenizer=TokenBigram&flags=KEY_NORMALIZE")
-    assert_body({},
-                :content_type => :json)
+    assert_success
     assert_table("Terms",
                  :type => Groonga::PatriciaTrie,
                  :key_type => "ShortText",

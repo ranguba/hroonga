@@ -30,61 +30,90 @@ class TestColumnCreate < TestHroongaCommand
     teardown_database
   end
 
-  def test_no_option
-    setup_table("Site", :type => :hash, :key_type => :ShortText)
+  class TestColumnType < TestColumnCreate
+    def test_no_option
+      setup_site_table
+      assert_no_column("Site", "my_column")
+      page.driver.post("/api/1/tables/Site/columns/my_column")
+      assert_success
+      assert_column("Site", "my_column")
+    end
 
-    assert_no_column("Site", "my_column")
-    page.driver.post("/api/1/tables/Site/columns/my_column")
-    assert_body({},
-                :content_type => :json)
-    assert_column("Site", "my_column")
+    def test_scalar_short_text_column
+      setup_site_table
+      assert_no_column("Site", "title")
+      page.driver.post("/api/1/tables/Site/columns/title?column_type=Scalar&value_type=ShortText")
+      assert_success
+      assert_column("Site", "title",
+                    :type => Groonga::VariableSizeColumn,
+                    :value_type => "ShortText",
+                    :vector => false)
+    end
+
+    def test_vector_short_text_column
+      setup_site_table
+      assert_no_column("Site", "title")
+      page.driver.post("/api/1/tables/Site/columns/title?column_type=Vector&value_type=ShortText")
+      assert_success
+      assert_column("Site", "title",
+                    :type => Groonga::VariableSizeColumn,
+                    :value_type => "ShortText",
+                    :vector => true)
+    end
+
+    def test_index_column
+      setup_table_to_index
+
+      setup_table("Terms", :type => :patricia_trie,
+                           :key_type => :ShortText,
+                           :default_tokenizer => :TokenBigram,
+                           :key_normalize => true)
+      assert_no_column("Terms", "blog_title")
+      page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&flags=WITH_POSITION")
+      assert_success
+      assert_column("Terms", "blog_title",
+                    :type => Groonga::IndexColumn,
+                    :value_type => "Site")
+    end
   end
 
-  def test_scalar_short_text_column
-    setup_table("Site", :type => :hash, :key_type => :ShortText)
+  class TestColumnFlags < TestColumnCreate
+    def test_single_flag
+      setup_terms_table
 
-    assert_no_column("Site", "title")
-    page.driver.post("/api/1/tables/Site/columns/title?column_type=Scalar&value_type=ShortText")
-    assert_body({},
-                :content_type => :json)
-    assert_column("Site", "title",
-                  :type => Groonga::VariableSizeColumn,
-                  :value_type => "ShortText",
-                  :vector => false)
-  end
+      page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&flags=WITH_POSITION")
+      assert_success
+      assert_column("Terms", "blog_title",
+                    :type => Groonga::IndexColumn,
+                    :value_type => "Site",
+                    :with_section => false,
+                    :with_position => true,
+                    :with_weight => false)
+    end
 
-  def test_vector_short_text_column
-    setup_table("Site", :type => :hash, :key_type => :ShortText)
+    def test_multiple_flags
+      setup_terms_table
 
-    assert_no_column("Site", "title")
-    page.driver.post("/api/1/tables/Site/columns/title?column_type=Vector&value_type=ShortText")
-    assert_body({},
-                :content_type => :json)
-    assert_column("Site", "title",
-                  :type => Groonga::VariableSizeColumn,
-                  :value_type => "ShortText",
-                  :vector => true)
-  end
+      page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&flags=WITH_POSITION%7CWITH_WEIGHT")
+      assert_success
+      assert_column("Terms", "blog_title",
+                    :type => Groonga::IndexColumn,
+                    :value_type => "Site",
+                    :with_section => false,
+                    :with_position => true,
+                    :with_weight => true)
+    end
 
-  def test_index_column
-    setup_table("Site", :type => :hash, :key_type => :ShortText)
-    setup_column("Site", "title", :type => :scalar, :value_type => :ShortText)
+    private
+    def setup_terms_table
+      setup_table_to_index
 
-    setup_table("Terms", :type => :patricia_trie,
-                         :key_type => :ShortText,
-                         :default_tokenizer => :TokenBigram,
-                         :key_normalize => true)
-
-    assert_no_column("Terms", "blog_title")
-    page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&flags=WITH_POSITION")
-    assert_body({},
-                :content_type => :json)
-    assert_column("Terms", "blog_title",
-                  :type => Groonga::IndexColumn,
-                  :value_type => "Site",
-                  :with_section => false,
-                  :with_position => true,
-                  :with_weight => false)
+      setup_table("Terms", :type => :patricia_trie,
+                           :key_type => :ShortText,
+                           :default_tokenizer => :TokenBigram,
+                           :key_normalize => true)
+      assert_no_column("Terms", "blog_title")
+    end
   end
 
   private
@@ -100,6 +129,15 @@ class TestColumnCreate < TestHroongaCommand
         table.column(column_name, options[:value_type], options)
       end
     end
+  end
+
+  def setup_site_table
+    setup_table("Site", :type => :hash, :key_type => :ShortText)
+  end
+
+  def setup_table_to_index
+    setup_site_table
+    setup_column("Site", "title", :type => :scalar, :value_type => :ShortText)
   end
 
   def assert_no_column(table_name, column_name)
