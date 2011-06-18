@@ -64,7 +64,7 @@ module Hroonga
       def parse_table_type
         if query.include?("table_type")
           table_type = unescape(query["table_type"])
-          table_type.downcase.to_sym
+          table_type.snake_case.to_sym
         else
           default_table_type
         end

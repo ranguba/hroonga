@@ -18,6 +18,12 @@
 require "cgi"
 require "groonga"
 
+class String
+  def snake_case
+    self.gsub(/([A-Z])/, "_\\1").downcase.sub(/\A_/, "")
+  end
+end
+
 module Hroonga
   module Command
     module Utils
