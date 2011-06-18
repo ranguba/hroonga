@@ -63,7 +63,7 @@ module Hroonga
       end
 
       def default_default_tokenizer
-        :TokenBigram
+        nil
       end
 
       def table_flags
