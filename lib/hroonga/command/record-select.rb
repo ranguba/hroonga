@@ -64,13 +64,25 @@ module Hroonga
           :offset => request.offset,
         ))
 
+        columns = format_column_list(selector)
+
         response = Rack::Response.new
         response["Content-Type"] = "application/json"
         response.write(JSON.generate({
-          :columns => [], #XXX
+          :n_records => result.hit_count,
+          :columns => columns,
           :records => result.formatted_result,
         }))
         response
+      end
+
+      def format_column_list(selector)
+        selector.column_list.collect do |name, value_type|
+          [
+            name,
+            value_type.name,
+          ]
+        end
       end
     end
   end
