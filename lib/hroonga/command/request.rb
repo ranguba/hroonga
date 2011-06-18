@@ -21,11 +21,7 @@ module Hroonga
   module Command
     class Request < Rack::Request
       def method
-        (query["_method"] || env["REQUEST_METHOD"]).upcase
-      end
-
-      def query
-        @query ||= parse_query(query_string)
+        (params["_method"] || env["REQUEST_METHOD"]).upcase
       end
 
       def command_path
@@ -170,8 +166,8 @@ module Hroonga
       end
 
       def option(key)
-        if query.include?(key) and not query[key].empty?
-          value = unescape(query[key])
+        if params.include?(key) and not params[key].empty?
+          value = unescape(params[key])
           value.to_sym
         else
           nil
@@ -179,16 +175,16 @@ module Hroonga
       end
 
       def string_option(key)
-        if query.include?(key)
-          unescape(query[key])
+        if params.include?(key)
+          unescape(params[key])
         else
           nil
         end
       end
 
       def snake_cased_option(key)
-        if query.include?(key)
-          value = unescape(query[key])
+        if params.include?(key)
+          value = unescape(params[key])
           to_snake_case(value).to_sym
         else
           nil
@@ -196,9 +192,9 @@ module Hroonga
       end
 
       def flags_option(key)
-        if query.include?(key)
+        if params.include?(key)
           flags = {}
-          value = unescape(query[key])
+          value = unescape(params[key])
           value.strip.split(/\s*\|\s*/).each do |flag|
             flags[flag.to_sym] = true
           end
@@ -209,9 +205,9 @@ module Hroonga
       end
 
       def json_option(key)
-        if query.include?(key)
+        if params.include?(key)
           flags = {}
-          value = unescape(query[key])
+          value = unescape(params[key])
           JSON.parse(value)
         else
           nil

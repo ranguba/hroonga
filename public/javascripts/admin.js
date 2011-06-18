@@ -34,16 +34,29 @@ function type_filter(value, type) {
   }
 }
 
-function column_type_filter(value, type) {
+function column_type_filter(type) {
   switch (type) {
     case 'GRN_OBJ_COLUMN_SCALAR':
-    return "Scalar";
+    return 'Scalar';
     case 'GRN_OBJ_COLUMN_VECTOR':
-    return "Vector";
+    return 'Vector';
     case 'GRN_OBJ_COLUMN_INDEX':
-    return "Index";
+    return 'Index';
   default:
-    return value;
+    return type;
+  }
+}
+
+function column_flag_filter(flag) {
+  switch (flag) {
+    case 'GRN_OBJ_WITH_SECTION':
+    return 'WITH_SECTION';
+    case 'GRN_OBJ_WITH_WEIGHT':
+    return 'WITH_WEIGHT';
+    case 'GRN_OBJ_WITH_POSITION':
+    return 'WITH_POSITION';
+  default:
+    return flag;
   }
 }
 
@@ -850,18 +863,18 @@ var GroongaAdmin = {
     );
   },
   createcolumn: function() {
-    var flags = 0;
+    var flags = [];
     $('#createcolumn-flags>input:checked').each(function() {
-      flags |= Groonga[$(this).val()];
+      flags.push(column_flag_filter($(this).val()));
     });
     $('#createcolumn-ii-flags>input:checked').each(function() {
-      flags |= Groonga[$(this).val()];
+      flags.push(column_flag_filter($(this).val()));
     });
-    flags |= Groonga[$('#createcolumn-column-compress').val()];
+    // flags |= Groonga[$('#createcolumn-column-compress').val()]; // XXX need to be migrated
     d = {
-      flags: flags,
+      flags: flags.join('|'),
       column_type: column_type_filter($('#createcolumn-column-type').val()),
-      value_type: $('#createcolumn-column-type').val()
+      value_type: $('#createcolumn-type').val()
     };
     if ($('#createcolumn-source').val()) {
       d['source'] = $('#createcolumn-source').val();
