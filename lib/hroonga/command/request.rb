@@ -101,7 +101,7 @@ module Hroonga
       end
 
       def parse_record_key
-        key_match = command_path.match(/\/records\/([^\/+])/)
+        key_match = command_path.match(/\/records\/([^\/]+)/)
         if key_match
           unescape(key_match.to_a[1])
         else
