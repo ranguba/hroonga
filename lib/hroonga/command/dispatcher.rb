@@ -23,6 +23,7 @@ require "hroonga/command/column-create"
 require "hroonga/command/list"
 require "hroonga/command/table-list"
 require "hroonga/command/column-list"
+require "hroonga/command/load"
 
 module Hroonga
   module Command
@@ -49,10 +50,10 @@ module Hroonga
           dispatch_table_command
         when /\A\/[^\/\?]+\/columns\/[^\/\?]+\/?\z/
           dispatch_column_command
+        when /\A\/[^\/\?]+\/records\/?\z/
+          dispatch_record_command
         when /\A\/[^\/\?]+\/columns\/?\z/
           ColumnList
-        when /\A\/[^\/\?]+\/records\/?\z/
-          RecordSelect
         when /\A\/?\z/
           TableList
         else
@@ -77,6 +78,21 @@ module Hroonga
           ColumnCreate
         when "DELETE"
           ColumnRemove
+        else
+          default_command
+        end
+      end
+
+      def dispatch_record_command
+        case request.method
+        when "GET"
+          RecordSelect
+        when "POST"
+          Load
+        when "PUT"
+          Load
+        when "DELETE"
+          Load
         else
           default_command
         end
