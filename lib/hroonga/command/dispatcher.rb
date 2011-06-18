@@ -18,6 +18,7 @@
 require "hroonga/command/utils"
 require "hroonga/command/selector"
 require "hroonga/command/table-create"
+require "hroonga/command/record-select"
 require "hroonga/command/column-create"
 
 module Hroonga
@@ -47,6 +48,8 @@ module Hroonga
           dispatch_column_command
         when /\A\/[^\/\?]+\/columns\/?\z/
           ColumnList
+        when /\A\/[^\/\?]+\/records\/?\z/
+          RecordSelect
         when /\A\/?\z/
           TableList
         else
