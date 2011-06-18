@@ -931,14 +931,13 @@ var GroongaAdmin = {
         }
       }
     });
+
     GroongaAdmin.showloading(
       $.ajax({
-        url: '/d/load',
+        url: '/api/1/tables/' + GroongaAdmin.current_table + '/records',
+        type: 'POST',
         data: {
-          "table" : GroongaAdmin.current_table,
-          "input_type" : "json",
-          "output_type" : "json",
-          "values" : $.toJSON([d])
+          "records" : $.toJSON([d])
         },
         dataType: 'json',
         success: function(d) {
