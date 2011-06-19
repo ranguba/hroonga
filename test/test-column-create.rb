@@ -77,7 +77,7 @@ class TestColumnCreate < TestHroongaCommand
     end
   end
 
-  class TestColumnFlags < TestColumnCreate
+  class TestIndexColumnOptions < TestColumnCreate
     def test_single_flag
       setup_terms_table
 
@@ -103,6 +103,37 @@ class TestColumnCreate < TestHroongaCommand
                     :with_position => true,
                     :with_weight => true)
     end
+
+=begin
+    # commented out because there is no API to get compression method from column
+    def test_compress_option_zlib
+      setup_terms_table
+
+      page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&compress=Zlib")
+      assert_success
+      assert_column("Terms", "blog_title",
+                    :type => Groonga::IndexColumn,
+                    :value_type => "Site",
+                    :with_section => false,
+                    :with_position => false,
+                    :with_weight => false,
+                    :compress => :zlib)
+    end
+
+    def test_compress_option_lzo
+      setup_terms_table
+
+      page.driver.post("/api/1/tables/Terms/columns/blog_title?column_type=Index&value_type=Site&source=title&compress=Lzo")
+      assert_success
+      assert_column("Terms", "blog_title",
+                    :type => Groonga::IndexColumn,
+                    :value_type => "Site",
+                    :with_section => false,
+                    :with_position => false,
+                    :with_weight => false,
+                    :compress => :lzo)
+    end
+=end
 
     private
     def setup_terms_table
@@ -170,6 +201,9 @@ class TestColumnCreate < TestHroongaCommand
     end
     if properties.include?(:with_position)
       actual[:with_position] = column.with_position?
+    end
+    if properties.include?(:compress)
+      actual[:compress] = column.compress
     end
     assert_equal(properties, actual, column.inspect)
   end
