@@ -30,7 +30,6 @@ config.setup_database
 
 if config.development?
   use Rack::ShowExceptions
-  use Rack::CommonLogger
 elsif config.production?
 end
 
