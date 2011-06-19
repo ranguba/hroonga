@@ -662,7 +662,7 @@ var GroongaAdmin = {
 
           $('#tab-recordlist-table')
             .empty()
-            .append($('<h1 />').text('レコード一覧: ' + params['table']))
+            .append($('<h1 />').text('レコード一覧: ' + GroongaAdmin.current_table))
             .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
             .append($('<div />').html(GroongaAdmin.create_table_element(recs.slice(1), recs[0], 1, 1)))
