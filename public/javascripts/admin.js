@@ -600,7 +600,6 @@ var GroongaAdmin = {
   },
   recordlist_simple: function(table_name, simplequery, simplequery_type, page, hide_dialog, clear_old_list) {
     var d = {
-      'table': table_name,
       'offset': (page - 1) * GroongaAdmin.recordlist_count,
       'limit': GroongaAdmin.recordlist_count
     }
