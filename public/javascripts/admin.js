@@ -34,6 +34,32 @@ function type_filter(value, type) {
   }
 }
 
+function table_type_filter(type) {
+  switch (type) {
+    case 'GRN_OBJ_TABLE_PAT_KEY':
+    return 'PatriciaTrie';
+    case 'GRN_OBJ_TABLE_HASH_KEY':
+    return 'Hash';
+    case 'GRN_OBJ_TABLE_NO_KEY':
+    return 'NoKey';
+  default:
+    return type;
+  }
+}
+
+function table_flag_filter(flag) {
+  switch (flag) {
+    case 'GRN_OBJ_PERSISTENT':
+    return 'PERSISTENT';
+    case 'GRN_OBJ_KEY_NORMALIZE':
+    return 'KEY_NORMALIZE';
+    case 'GRN_OBJ_KEY_WITH_SIS':
+    return 'KEY_WITH_SIS';
+  default:
+    return flag;
+  }
+}
+
 function column_type_filter(type) {
   switch (type) {
     case 'GRN_OBJ_COLUMN_SCALAR':
@@ -847,18 +873,17 @@ var GroongaAdmin = {
     );
   },
   createtable: function() {
-    var flags = 0;
+    var flags = [];
     $('#createtable-flags>input:checked').each(function() {
-      flags |= Groonga[$(this).val()];
+      flags.push(table_flag_filter($(this).val()));
     });
-    flags |= Groonga[$('#createtable-key-index').val()];
     GroongaAdmin.showloading(
       $.ajax({
         url: '/api/1/tables/' + $('#createtable-name').val(),
         type: 'POST',
         data: {
-          name: $('#createtable-name').val(),
-          'flags': flags,
+          'flags': flags.join('|'),
+          table_type: table_type_filter($('#createtable-key-index').val()),
           key_type: $('#createtable-key-type').val(),
           value_type: $('#createtable-value-type').val(),
           default_tokenizer: $('#createtable-default-tokenizer').val()
