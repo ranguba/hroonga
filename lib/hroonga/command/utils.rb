@@ -29,7 +29,7 @@ module Hroonga
       end
 
       def request
-        @request ||= request_class.new(@env)
+        request_class.new(@env)
       end
 
       def request_class
