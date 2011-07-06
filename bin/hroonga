@@ -25,6 +25,15 @@ ARGV << "rackup" if ARGV.empty?
 loop do
   argument = ARGV.shift
   case argument
+  when "passenger"
+    require 'phusion_passenger'
+    require 'phusion_passenger/standalone/main'
+    ENV["HROONGA_PASSENGER_STANDALONE"] = "yes"
+    if ARGV[0] == "start"
+      ARGV[1, 0] = ["--rackup", config_ru_path]
+    end
+    PhusionPassenger::Standalone::Main.run!(ARGV)
+    break
   when "shotgun"
     require "shotgun"
     shotgun_rb = $LOADED_FEATURES.last
@@ -44,7 +53,7 @@ loop do
     if !help_argument_p and ENV["HROONGA_DB"].nil?
       ENV["HROONGA_DB"] = argument
     else
-      puts("Usage: #{File.basename($0)} [DB_PATH] [rackup|shotgun] [OPTIONS]")
+      puts("Usage: #{File.basename($0)} [DB_PATH] [rackup|shotgun|passenger] [OPTIONS]")
       exit(help_argument_p)
     end
   end

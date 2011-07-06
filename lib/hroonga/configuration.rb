@@ -23,6 +23,7 @@ module Hroonga
     def initialize
       @load_paths = []
       add_load_path(".")
+      @use_cache = nil
     end
 
     def environment
@@ -81,6 +82,22 @@ module Hroonga
 
     def production?
       environment == "production"
+    end
+
+    def use_cache?
+      if @use_cache.nil?
+        production?
+      else
+        @use_cache
+      end
+    end
+
+    def use_cache=(use_cache)
+      @use_cache = use_cache
+    end
+
+    def passenger?
+      ENV["HROONGA_PASSENGER_STANDALONE"] == "yes"
     end
   end
 end
