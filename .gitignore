@@ -5,3 +5,5 @@
 /.yardoc/
 /doc/html/
 /pkg/
+/var/cache/
+
