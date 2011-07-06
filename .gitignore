@@ -2,3 +2,5 @@
 /log/*.log
 /tmp/pids/
 /db/
+/.yardoc/
+/doc/html/
