@@ -22,6 +22,7 @@ module Hroonga
   class Configuration
     def initialize
       @load_paths = []
+      add_load_path(".")
     end
 
     def environment

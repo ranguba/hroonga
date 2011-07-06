@@ -21,8 +21,8 @@ require "hroonga"
 base_dir = Pathname(__FILE__).dirname
 
 config = Hroonga::Configuration.new
-config.add_load_path(base_dir)
-config.load("etc/hroonga.conf")
+config.add_load_path(base_dir + "etc")
+config.load("hroonga.conf")
 
 config.setup_database
 
