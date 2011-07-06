@@ -22,21 +22,30 @@ config_ru_path = File.join(base_dir, "config.ru")
 
 ARGV << "rackup" if ARGV.empty?
 
-first_argument = ARGV.shift
-case first_argument
-when "shotgun"
-  require "shotgun"
-  shotgun_rb = $LOADED_FEATURES.last
-  shotgun_base_dir = File.dirname(File.dirname(shotgun_rb))
-  shotgun_bin = File.join(shotgun_base_dir, "bin", "shotgun")
-  ARGV.unshift("--public", public_path)
-  ARGV << config_ru_path
-  load shotgun_bin
-when "rackup"
-  require "rack"
-  ARGV.unshift("--option", "config=#{config_ru_path}")
-  Rack::Server.start
-else
-  puts("Usage: #{File.basename($0)} [rackup|shotgun] [OPTIONS]")
-  exit(["-h", "--help"].include?(first_argument))
+loop do
+  argument = ARGV.shift
+  case argument
+  when "shotgun"
+    require "shotgun"
+    shotgun_rb = $LOADED_FEATURES.last
+    shotgun_base_dir = File.dirname(File.dirname(shotgun_rb))
+    shotgun_bin = File.join(shotgun_base_dir, "bin", "shotgun")
+    ARGV.unshift("--public", public_path)
+    ARGV << config_ru_path
+    load shotgun_bin
+    break
+  when "rackup"
+    require "rack"
+    ARGV.unshift("--option", "config=#{config_ru_path}")
+    Rack::Server.start
+    break
+  else
+    help_argument_p = ["-h", "--help"].include?(argument)
+    if !help_argument_p and ENV["HROONGA_DB"].nil?
+      ENV["HROONGA_DB"] = argument
+    else
+      puts("Usage: #{File.basename($0)} [DB_PATH] [rackup|shotgun] [OPTIONS]")
+      exit(help_argument_p)
+    end
+  end
 end

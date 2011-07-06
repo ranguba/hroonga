@@ -47,19 +47,24 @@ module Hroonga
     end
 
     def setup_database
-      @database_path = Pathname.new("db/#{environment}/db")
-      if @database_path.exist?
-        @database = Groonga::Database.open(database_path,
+      self.database_path ||= ENV["HROONGA_DB"] || "db/#{environment}/db"
+      if database_path.exist?
+        @database = Groonga::Database.open(database_path.to_s,
                                            :context => context)
       else
-        FileUtils.mkdir_p(@database_path.dirname.to_s)
+        FileUtils.mkdir_p(database_path.dirname.to_s)
         @database = Groonga::Database.create(:context => context,
-                                             :path => database_path)
+                                             :path => database_path.to_s)
       end
     end
 
     def database_path
-      @database_path.to_s
+      @database_path
+    end
+
+    def database_path=(path)
+      path = Pathname.new(path) if path.is_a?(String)
+      @database_path = path
     end
 
     def context
