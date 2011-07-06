@@ -28,4 +28,5 @@ group :development, :test do
   gem "test-unit-capybara"
   gem "activegroonga-fabrication"
   gem "thin"
+  gem "shotgun"
 end
