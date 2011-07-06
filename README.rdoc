@@ -36,8 +36,6 @@ inclidng contributed patches.)
 
 == Documents
 
-Japanese only. Sorry.
-
 http://groonga.rubyforge.org/hroonga/
 
 == Mailing list
