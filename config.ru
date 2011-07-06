@@ -39,6 +39,11 @@ use Rack::ConditionalGet
 
 use Racknga::Middleware::JSONP
 
+if config.use_cache?
+  cache_database_path = Pathname.new("var/cache/db")
+  use Racknga::Middleware::Cache, :database_path => cache_database_path.to_s
+end
+
 use Rack::Lint
 use Rack::Head
 
