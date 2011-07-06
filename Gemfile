@@ -22,6 +22,7 @@ gem "passenger"
 
 group :development, :test do
   gem "yard"
+  gem "jeweler"
   gem "test-unit-notify"
   gem "test-unit-rr"
   gem "test-unit-capybara"
