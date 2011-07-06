@@ -61,7 +61,6 @@ middlewares. It's based on rroonga.
 EOD
   spec.license = "LGPLv2"
   spec.files = FileList["lib/**/*.rb",
-                        "bin/*",
                         "*.rb",
                         "example/*.rb",
                         "AUTHORS",
@@ -69,6 +68,9 @@ EOD
                         "Gemfile",
                         "config.ru",
                         "{public,etc}/**/*"]
+  spec.executables = Dir.chdir(spec.bindir) do
+    FileList["*"].to_a
+  end
   spec.test_files = FileList["test/**/*.rb"]
 end
 
